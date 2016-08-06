@@ -7,11 +7,19 @@ import urllib.request
 print("\nCodeSmithy bootstrap build")
 print("--------------------------\n")
 
-print("Step 1a: Fetching CodeSmithy code from https://github.com/CodeSmithyIDE/CodeSmithy/archive/master.zip")
-urllib.request.urlretrieve("https://github.com/CodeSmithyIDE/CodeSmithy/archive/master.zip", "master.zip")
+print("Step 1a: Fetching libgit2 code from https://github.com/CodeSmithyIDE/libgit2/archive/master.zip")
+urllib.request.urlretrieve("https://github.com/CodeSmithyIDE/libgit2/archive/master.zip", "libgit2-master.zip")
 
-print("Step 1b: Unzipping master.zip\n")
-zip_ref = zipfile.ZipFile("master.zip", "r")
+print("Step 1b: Unzipping libgit2-master.zip\n")
+zip_ref = zipfile.ZipFile("libgit2-master.zip", "r")
+zip_ref.extractall(".")
+zip_ref.close()
+
+print("Step 1c: Fetching CodeSmithy code from https://github.com/CodeSmithyIDE/CodeSmithy/archive/master.zip")
+urllib.request.urlretrieve("https://github.com/CodeSmithyIDE/CodeSmithy/archive/master.zip", "CodeSmithy-master.zip")
+
+print("Step 1d: Unzipping CodeSmithy-master.zip\n")
+zip_ref = zipfile.ZipFile("CodeSmithy-master.zip", "r")
 zip_ref.extractall(".")
 zip_ref.close()
 
