@@ -1,4 +1,5 @@
 import sys
+import platform
 import os.path
 import subprocess
 import zipfile
@@ -6,6 +7,18 @@ import urllib.request
 
 print("\nCodeSmithy bootstrap build")
 print("--------------------------\n")
+
+platformName = platform.system()
+is64bit = False
+if platform.machine() == "AMD64":
+    is64bit = True
+    
+print("Platform: " + platformName)
+if is64bit:
+    print("Architecture: 64 bit")
+else:
+    print("Architecture: 32 bit")
+print("")
 
 print("Step 1a: Fetching libgit2 code from https://github.com/CodeSmithyIDE/libgit2/archive/master.zip")
 urllib.request.urlretrieve("https://github.com/CodeSmithyIDE/libgit2/archive/master.zip", "libgit2-master.zip")
@@ -42,7 +55,17 @@ if len(compilers) == 0:
 selectedCompiler = (int(input("Select the compiler to use: ")) - 1)
 print("")
 
-print("Step 3: Building CodeSmithyMake")
+# CMake is not easily buildable on Windows so we rely on a binary distribution
+print("Step 3: Installing CMake\n")
+if platformName == "Windows":
+    if is64bit:
+        zip_ref = zipfile.ZipFile("CMake/cmake-3.6.1-win64-x64.zip", "r")
+    else:
+        zip_ref = zipfile.ZipFile("CMake/cmake-3.6.1-win32-x86.zip", "r")
+    zip_ref.extractall(".")
+    zip_ref.close()
+
+print("Step 4: Building CodeSmithyMake")
 codeSmithyMakeMakefilePath = ""
 if compilers[selectedCompiler] == "Visual Studio 2015":
     codeSmithyMakeMakefilePath = "CodeSmithy-master/Make/Makefiles/VC14/CodeSmithyMake.sln"
