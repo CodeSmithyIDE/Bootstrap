@@ -20,18 +20,26 @@ else:
     print("Architecture: 32 bit")
 print("")
 
-print("Step 1a: Fetching libgit2 code from https://github.com/CodeSmithyIDE/libgit2/archive/master.zip", flush=True)
+print("Step 1a: Fetching TestFramework code from https://github.com/CodeSmithyIDE/TestFramework/archive/master.zip", flush=True)
+urllib.request.urlretrieve("https://github.com/CodeSmithyIDE/TestFramework/archive/master.zip", "TestFramework-master.zip")
+
+print("Step 1b: Unzipping TestFramework-master.zip\n", flush=True)
+zip_ref = zipfile.ZipFile("TestFramework-master.zip", "r")
+zip_ref.extractall(".")
+zip_ref.close()
+
+print("Step 1c: Fetching libgit2 code from https://github.com/CodeSmithyIDE/libgit2/archive/master.zip", flush=True)
 urllib.request.urlretrieve("https://github.com/CodeSmithyIDE/libgit2/archive/master.zip", "libgit2-master.zip")
 
-print("Step 1b: Unzipping libgit2-master.zip\n", flush=True)
+print("Step 1d: Unzipping libgit2-master.zip\n", flush=True)
 zip_ref = zipfile.ZipFile("libgit2-master.zip", "r")
 zip_ref.extractall(".")
 zip_ref.close()
 
-print("Step 1c: Fetching CodeSmithy code from https://github.com/CodeSmithyIDE/CodeSmithy/archive/master.zip", flush=True)
+print("Step 1e: Fetching CodeSmithy code from https://github.com/CodeSmithyIDE/CodeSmithy/archive/master.zip", flush=True)
 urllib.request.urlretrieve("https://github.com/CodeSmithyIDE/CodeSmithy/archive/master.zip", "CodeSmithy-master.zip")
 
-print("Step 1d: Unzipping CodeSmithy-master.zip\n", flush=True)
+print("Step 1f: Unzipping CodeSmithy-master.zip\n", flush=True)
 zip_ref = zipfile.ZipFile("CodeSmithy-master.zip", "r")
 zip_ref.extractall(".")
 zip_ref.close()
@@ -88,18 +96,45 @@ else:
     
 print("Step 6: Building CodeSmithyMake", flush=True)
 codeSmithyMakeMakefilePath = ""
+codeSmithyMakePath = ""
 if compilers[selectedCompiler] == "Visual Studio 2015":
     codeSmithyMakeMakefilePath = "CodeSmithy-master/Make/Makefiles/VC14/CodeSmithyMake.sln"
+    codeSmithyMakePath = "CodeSmithy-master/Make/Makefiles/VC14/Debug/CodeSmithyMake.exe"
 rc = subprocess.call([compilerPaths[selectedCompiler], codeSmithyMakeMakefilePath, "/build", "Debug"])
 if rc == 0:
     print("CodeSmithyMake built successfully")
 else:
+    print("Failed to build CodeSmithyMake, exiting")
     sys.exit(-1)
     
-print("Step 7: Build CodeSmithy", flush=True)
-rc = subprocess.call(["CodeSmithy-master/Make/Makefiles/VC14/Debug/CodeSmithyMake.exe"])
+print("Step 7: Build TestFrameworkCore", flush=True)
+rc = subprocess.call([codeSmithyMakePath])
+if rc == 0:
+    print("TestFrameworkCore built successfully")
+else:
+    print("Failed to build TestFrameworkCore, exiting")
+    sys.exit(-1)
+
+print("Step 8: Build CodeSmithy", flush=True)
+rc = subprocess.call([codeSmithyMakePath])
 if rc == 0:
     print("CodeSmithy built successfully")
 else:
+    print("Failed to build CodeSmithy, exiting")
     sys.exit(-1)
-    
+
+print("Step 9: Build CodeSmithyCore tests", flush=True)
+rc = subprocess.call([codeSmithyMakePath])
+if rc == 0:
+    print("CodeSmithyCoreTests built successfully")
+else:
+    print("Failed to build CodeSmithyCoreTests, exiting")
+    sys.exit(-1)
+
+print("Step 10: Build CodeSmithyMake tests", flush=True)
+rc = subprocess.call([codeSmithyMakePath])
+if rc == 0:
+    print("CodeSmithyMakeTests built successfully")
+else:
+    print("Failed to build CodeSmithyMakeTests, exiting")
+    sys.exit(-1)
