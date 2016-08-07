@@ -82,6 +82,7 @@ if rc == 0:
     print("libgit2 build successfully")
 else:
     sys.exit(-1)
+print("")
 
 print("Step 5: Building CodeSmithyCore", flush=True)
 codeSmithyCoreMakefilePath = ""
@@ -93,7 +94,8 @@ if rc == 0:
 else:
     print("Failed to build CodeSmithyCore, exiting")
     sys.exit(-1)
-    
+print("")
+
 print("Step 6: Building CodeSmithyMake", flush=True)
 codeSmithyMakeMakefilePath = ""
 codeSmithyMakePath = ""
@@ -106,35 +108,40 @@ if rc == 0:
 else:
     print("Failed to build CodeSmithyMake, exiting")
     sys.exit(-1)
-    
+print("")
+
 print("Step 7: Build TestFrameworkCore", flush=True)
-rc = subprocess.call([codeSmithyMakePath])
+rc = subprocess.call([codeSmithyMakePath, "TestFramework-master/Core/Makefiles/VC14/IshikoTestFrameworkCore.sln"])
 if rc == 0:
     print("TestFrameworkCore built successfully")
 else:
     print("Failed to build TestFrameworkCore, exiting")
     sys.exit(-1)
+print("")
 
 print("Step 8: Build CodeSmithy", flush=True)
-rc = subprocess.call([codeSmithyMakePath])
+rc = subprocess.call([codeSmithyMakePath, "CodeSmithy-master/UI/Makefiles/VC14/CodeSmithy.sln"])
 if rc == 0:
     print("CodeSmithy built successfully")
 else:
     print("Failed to build CodeSmithy, exiting")
     sys.exit(-1)
+print("")
 
 print("Step 9: Build CodeSmithyCore tests", flush=True)
-rc = subprocess.call([codeSmithyMakePath])
+rc = subprocess.call([codeSmithyMakePath, "CodeSmithy-master/Tests/Core/Makefiles/VC14/CodeSmithyCoreTests.sln"])
 if rc == 0:
     print("CodeSmithyCoreTests built successfully")
 else:
     print("Failed to build CodeSmithyCoreTests, exiting")
     sys.exit(-1)
+print("")
 
 print("Step 10: Build CodeSmithyMake tests", flush=True)
-rc = subprocess.call([codeSmithyMakePath])
+rc = subprocess.call([codeSmithyMakePath, "CodeSmithy-master/Tests/Make/Makefiles/VC14/CodeSmithyMakeTests.sln"])
 if rc == 0:
     print("CodeSmithyMakeTests built successfully")
 else:
     print("Failed to build CodeSmithyMakeTests, exiting")
     sys.exit(-1)
+print("")
