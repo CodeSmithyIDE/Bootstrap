@@ -57,15 +57,23 @@ print("")
 
 # CMake is not easily buildable on Windows so we rely on a binary distribution
 print("Step 3: Installing CMake\n")
+cmakePath = ""
 if platformName == "Windows":
     if is64bit:
         zip_ref = zipfile.ZipFile("CMake/cmake-3.6.1-win64-x64.zip", "r")
+        cmakePath = "cmake-3.6.1-win64-x64/bin/cmake.exe"
     else:
         zip_ref = zipfile.ZipFile("CMake/cmake-3.6.1-win32-x86.zip", "r")
+        cmakePath = "cmake-3.6.1-win32-x86/bin/cmake.exe"
     zip_ref.extractall(".")
     zip_ref.close()
 
-print("Step 4: Building CodeSmithyMake")
+print("Step 4: Building libgit2")
+rc = subprocess.call([cmakePath, "--build", "libgit2-master"])
+if rc == 0:
+    print("libgit2 build successfully")
+
+print("Step 5: Building CodeSmithyMake")
 codeSmithyMakeMakefilePath = ""
 if compilers[selectedCompiler] == "Visual Studio 2015":
     codeSmithyMakeMakefilePath = "CodeSmithy-master/Make/Makefiles/VC14/CodeSmithyMake.sln"
