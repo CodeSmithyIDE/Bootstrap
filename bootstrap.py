@@ -20,29 +20,19 @@ else:
     print("Architecture: 32 bit")
 print("")
 
-print("Step 1a: Fetching TestFramework code from https://github.com/CodeSmithyIDE/TestFramework/archive/master.zip", flush=True)
-urllib.request.urlretrieve("https://github.com/CodeSmithyIDE/TestFramework/archive/master.zip", "TestFramework-master.zip")
+def downloadAndUnzip(substep, name, url):
+    print("Step 1" + substep + ": Fetching " + name + " code from " + url, flush=True)
+    urllib.request.urlretrieve(url, name + "-master.zip")
+    print("Step 1" + substep + ": Unzipping " + name + "-master.zip\n", flush=True)
+    zip_ref = zipfile.ZipFile(name + "-master.zip", "r")
+    zip_ref.extractall(".")
+    zip_ref.close()
+    return
 
-print("Step 1b: Unzipping TestFramework-master.zip\n", flush=True)
-zip_ref = zipfile.ZipFile("TestFramework-master.zip", "r")
-zip_ref.extractall(".")
-zip_ref.close()
-
-print("Step 1c: Fetching libgit2 code from https://github.com/CodeSmithyIDE/libgit2/archive/master.zip", flush=True)
-urllib.request.urlretrieve("https://github.com/CodeSmithyIDE/libgit2/archive/master.zip", "libgit2-master.zip")
-
-print("Step 1d: Unzipping libgit2-master.zip\n", flush=True)
-zip_ref = zipfile.ZipFile("libgit2-master.zip", "r")
-zip_ref.extractall(".")
-zip_ref.close()
-
-print("Step 1e: Fetching CodeSmithy code from https://github.com/CodeSmithyIDE/CodeSmithy/archive/master.zip", flush=True)
-urllib.request.urlretrieve("https://github.com/CodeSmithyIDE/CodeSmithy/archive/master.zip", "CodeSmithy-master.zip")
-
-print("Step 1f: Unzipping CodeSmithy-master.zip\n", flush=True)
-zip_ref = zipfile.ZipFile("CodeSmithy-master.zip", "r")
-zip_ref.extractall(".")
-zip_ref.close()
+downloadAndUnzip("a", "TestFramework", "https://github.com/CodeSmithyIDE/TestFramework/archive/master.zip")
+downloadAndUnzip("b", "libgit2", "https://github.com/CodeSmithyIDE/libgit2/archive/master.zip")
+downloadAndUnzip("c", "wxWidgets", "https://github.com/CodeSmithyIDE/wxWidgets/archive/master.zip")
+downloadAndUnzip("d", "CodeSmithy", "https://github.com/CodeSmithyIDE/CodeSmithy/archive/master.zip")
 
 print("Step 2: Finding compilers")
 compilers = []
@@ -81,6 +71,7 @@ rc = subprocess.call([cmakePath, "--build", "libgit2-master"])
 if rc == 0:
     print("libgit2 build successfully")
 else:
+    print("Failed to build libgit2, exiting")
     sys.exit(-1)
 print("")
 
