@@ -53,7 +53,7 @@ downloadAndUnzip("d", "Ishiko", "FileTypes", "https://github.com/CodeSmithyIDE/F
 downloadAndUnzip("e", "Ishiko", "TestFramework", "https://github.com/CodeSmithyIDE/TestFramework/archive/master.zip")
 downloadAndUnzip("f", "", "libgit2", "https://github.com/CodeSmithyIDE/libgit2/archive/master.zip")
 downloadAndUnzip("g", "", "wxWidgets", "https://github.com/CodeSmithyIDE/wxWidgets/archive/master.zip")
-downloadAndUnzip("h", "", "CodeSmithy", "https://github.com/CodeSmithyIDE/CodeSmithy/archive/master.zip")
+downloadAndUnzip("h", "CodeSmithyIDE", "CodeSmithy", "https://github.com/CodeSmithyIDE/CodeSmithy/archive/master.zip")
 
 print("Step 2: Finding compilers")
 compilers = []
@@ -100,6 +100,7 @@ os.chdir("../..")
 print("")
 
 os.environ["ISHIKO"] = os.getcwd() + "/Build/Ishiko"
+os.environ["CODESMITHY"] = os.getcwd() + "/Build/CodeSmithyIDE/CodeSmithy"
 
 print("Step 5: Building Process", flush=True)
 processMakefilePath = ""
@@ -116,7 +117,7 @@ print("")
 print("Step 6: Building CodeSmithyCore", flush=True)
 codeSmithyCoreMakefilePath = ""
 if compilers[selectedCompiler] == "Visual Studio 2015":
-    codeSmithyCoreMakefilePath = "Build/CodeSmithy/Core/Makefiles/VC14/CodeSmithyCore.sln"
+    codeSmithyCoreMakefilePath = "Build/CodeSmithyIDE/CodeSmithy/Core/Makefiles/VC14/CodeSmithyCore.sln"
 rc = subprocess.call([compilerPaths[selectedCompiler], codeSmithyCoreMakefilePath, "/build", "Debug"])
 if rc == 0:
     print("CodeSmithyCore built successfully")
@@ -129,8 +130,8 @@ print("Step 7: Building CodeSmithyMake", flush=True)
 codeSmithyMakeMakefilePath = ""
 codeSmithyMakePath = ""
 if compilers[selectedCompiler] == "Visual Studio 2015":
-    codeSmithyMakeMakefilePath = "Build/CodeSmithy/Make/Makefiles/VC14/CodeSmithyMake.sln"
-    codeSmithyMakePath = "Build/CodeSmithy/Bin/Win32/CodeSmithyMake.exe"
+    codeSmithyMakeMakefilePath = "Build/CodeSmithyIDE/CodeSmithy/Make/Makefiles/VC14/CodeSmithyMake.sln"
+    codeSmithyMakePath = "Build/CodeSmithyIDE/CodeSmithy/Bin/Win32/CodeSmithyMake.exe"
 rc = subprocess.call([compilerPaths[selectedCompiler], codeSmithyMakeMakefilePath, "/build", "Debug"])
 if rc == 0:
     print("CodeSmithyMake built successfully")
@@ -164,14 +165,26 @@ print("Step 11: Building FileTypes", flush=True)
 buildWithCodeSmithyMake("FileTypes", "Build/Ishiko/FileTypes/Makefiles/VC14/IshikoFileTypes.sln")
 print("")
 
-print("Step 12: Building CodeSmithy", flush=True)
-buildWithCodeSmithyMake("CodeSmithy", "Build/CodeSmithy/UI/Makefiles/VC14/CodeSmithy.sln")
+print("Step 12: Building CodeSmithyUICore", flush=True)
+buildWithCodeSmithyMake("CodeSmithyUICore", "Build/CodeSmithyIDE/CodeSmithy/UICore/Makefiles/VC14/CodeSmithyUICore.sln")
 print("")
 
-print("Step 13: Building CodeSmithyCore tests", flush=True)
-buildWithCodeSmithyMake("CodeSmithyCore", "Build/CodeSmithy/Tests/Core/Makefiles/VC14/CodeSmithyCoreTests.sln")
+print("Step 13: Building CodeSmithyUIElements", flush=True)
+buildWithCodeSmithyMake("CodeSmithyUIElements", "Build/CodeSmithyIDE/CodeSmithy/UIElements/Makefiles/VC14/CodeSmithyUIElements.sln")
 print("")
 
-print("Step 14: Building CodeSmithyMake tests", flush=True)
-buildWithCodeSmithyMake("CodeSmithyMake", "Build/CodeSmithy/Tests/Make/Makefiles/VC14/CodeSmithyMakeTests.sln")
+print("Step 14: Building CodeSmithyUIImplementation", flush=True)
+buildWithCodeSmithyMake("CodeSmithyUIImplementation", "Build/CodeSmithyIDE/CodeSmithy/UIImplementation/Makefiles/VC14/CodeSmithyUIImplementation.sln")
+print("")
+
+print("Step 15: Building CodeSmithy", flush=True)
+buildWithCodeSmithyMake("CodeSmithy", "Build/CodeSmithyIDE/CodeSmithy/UI/Makefiles/VC14/CodeSmithy.sln")
+print("")
+
+print("Step 16: Building CodeSmithyCore tests", flush=True)
+buildWithCodeSmithyMake("CodeSmithyCore", "Build/CodeSmithyIDE/CodeSmithy/Tests/Core/Makefiles/VC14/CodeSmithyCoreTests.sln")
+print("")
+
+print("Step 17: Building CodeSmithyMake tests", flush=True)
+buildWithCodeSmithyMake("CodeSmithyMake", "Build/CodeSmithyIDE/CodeSmithy/Tests/Make/Makefiles/VC14/CodeSmithyMakeTests.sln")
 print("")
