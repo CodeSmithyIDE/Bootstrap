@@ -28,24 +28,31 @@ shutil.rmtree("Build", ignore_errors=True)
 Path("Downloads").mkdir(exist_ok=True)
 Path("Build").mkdir(exist_ok=True)
 
-def downloadAndUnzip(substep, name, url):
+def downloadAndUnzip(substep, organization, name, url):
     print("Step 1" + substep + ": Fetching " + name + " code from " + url, flush=True)
-    urllib.request.urlretrieve(url, "Downloads/" + name + "-master.zip")
-    print("Step 1" + substep + ": Unzipping " + name + "-master.zip\n", flush=True)
-    zip_ref = zipfile.ZipFile("Downloads/" + name + "-master.zip", "r")
-    zip_ref.extractall("Build")
+    downloadPath = "Downloads/" + name + "-master.zip"
+    extractPathPrefix = "Build"
+    if len(organization) > 0:
+        Path("Downloads/" + organization).mkdir(exist_ok=True)
+        Path("Build/" + organization).mkdir(exist_ok=True)
+        downloadPath = "Downloads/" + organization + "/" + name + "-master.zip"
+        extractPathPrefix = "Build/" + organization 
+    urllib.request.urlretrieve(url, downloadPath)
+    print("Step 1" + substep + ": Unzipping " + downloadPath + "\n", flush=True)
+    zip_ref = zipfile.ZipFile(downloadPath, "r")
+    zip_ref.extractall(extractPathPrefix)
     zip_ref.close()
-    os.rename("Build/" + name + "-master", "Build/" + name)
+    os.rename(extractPathPrefix + "/" + name + "-master", extractPathPrefix + "/" + name)
     return
 
-downloadAndUnzip("a", "Errors", "https://github.com/CodeSmithyIDE/Errors/archive/master.zip")
-downloadAndUnzip("b", "Process", "https://github.com/CodeSmithyIDE/Process/archive/master.zip")
-downloadAndUnzip("c", "WindowsRegistry", "https://github.com/CodeSmithyIDE/WindowsRegistry/archive/master.zip")
-downloadAndUnzip("d", "FileTypes", "https://github.com/CodeSmithyIDE/FileTypes/archive/master.zip")
-downloadAndUnzip("e", "TestFramework", "https://github.com/CodeSmithyIDE/TestFramework/archive/master.zip")
-downloadAndUnzip("f", "libgit2", "https://github.com/CodeSmithyIDE/libgit2/archive/master.zip")
-downloadAndUnzip("g", "wxWidgets", "https://github.com/CodeSmithyIDE/wxWidgets/archive/master.zip")
-downloadAndUnzip("h", "CodeSmithy", "https://github.com/CodeSmithyIDE/CodeSmithy/archive/master.zip")
+downloadAndUnzip("a", "Ishiko", "Errors", "https://github.com/CodeSmithyIDE/Errors/archive/master.zip")
+downloadAndUnzip("b", "Ishiko", "Process", "https://github.com/CodeSmithyIDE/Process/archive/master.zip")
+downloadAndUnzip("c", "Ishiko", "WindowsRegistry", "https://github.com/CodeSmithyIDE/WindowsRegistry/archive/master.zip")
+downloadAndUnzip("d", "Ishiko", "FileTypes", "https://github.com/CodeSmithyIDE/FileTypes/archive/master.zip")
+downloadAndUnzip("e", "Ishiko", "TestFramework", "https://github.com/CodeSmithyIDE/TestFramework/archive/master.zip")
+downloadAndUnzip("f", "", "libgit2", "https://github.com/CodeSmithyIDE/libgit2/archive/master.zip")
+downloadAndUnzip("g", "", "wxWidgets", "https://github.com/CodeSmithyIDE/wxWidgets/archive/master.zip")
+downloadAndUnzip("h", "", "CodeSmithy", "https://github.com/CodeSmithyIDE/CodeSmithy/archive/master.zip")
 
 print("Step 2: Finding compilers")
 compilers = []
@@ -91,12 +98,12 @@ else:
 os.chdir("../..")
 print("")
 
-os.environ["ISHIKO"] = os.getcwd() + "/Build"
+os.environ["ISHIKO"] = os.getcwd() + "/Build/Ishiko"
 
 print("Step 5: Building Process", flush=True)
 processMakefilePath = ""
 if compilers[selectedCompiler] == "Visual Studio 2015":
-    processMakefilePath = "Build/Process/Makefiles/VC14/IshikoProcess.sln"
+    processMakefilePath = "Build/Ishiko/Process/Makefiles/VC14/IshikoProcess.sln"
 rc = subprocess.call([compilerPaths[selectedCompiler], processMakefilePath, "/build", "Debug"])
 if rc == 0:
     print("Process built successfully")
@@ -132,7 +139,7 @@ else:
 print("")
 
 print("Step 8: Build Errors", flush=True)
-rc = subprocess.call([codeSmithyMakePath, "Build/Errors/Makefiles/VC14/IshikoErrors.sln"])
+rc = subprocess.call([codeSmithyMakePath, "Build/Ishiko/Errors/Makefiles/VC14/IshikoErrors.sln"])
 if rc == 0:
     print("Errors built successfully")
 else:
@@ -141,7 +148,7 @@ else:
 print("")
 
 print("Step 9: Build TestFrameworkCore", flush=True)
-rc = subprocess.call([codeSmithyMakePath, "Build/TestFramework/Core/Makefiles/VC14/IshikoTestFrameworkCore.sln"])
+rc = subprocess.call([codeSmithyMakePath, "Build/Ishiko/TestFramework/Core/Makefiles/VC14/IshikoTestFrameworkCore.sln"])
 if rc == 0:
     print("TestFrameworkCore built successfully")
 else:
@@ -150,7 +157,7 @@ else:
 print("")
 
 print("Step 10: Build WindowsRegistry", flush=True)
-rc = subprocess.call([codeSmithyMakePath, "Build/WindowsRegistry/Makefiles/VC14/IshikoWindowsRegistry.sln"])
+rc = subprocess.call([codeSmithyMakePath, "Build/Ishiko/WindowsRegistry/Makefiles/VC14/IshikoWindowsRegistry.sln"])
 if rc == 0:
     print("WindowsRegistry built successfully")
 else:
@@ -159,7 +166,7 @@ else:
 print("")
 
 print("Step 11: Build FileTypes", flush=True)
-rc = subprocess.call([codeSmithyMakePath, "Build/FileTypes/Makefiles/VC14/IshikoFileTypes.sln"])
+rc = subprocess.call([codeSmithyMakePath, "Build/Ishiko/FileTypes/Makefiles/VC14/IshikoFileTypes.sln"])
 if rc == 0:
     print("FileTypes built successfully")
 else:
