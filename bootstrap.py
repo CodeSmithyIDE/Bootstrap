@@ -42,6 +42,7 @@ def downloadAndUnzip(substep, organization, name, url):
     zip_ref = zipfile.ZipFile(downloadPath, "r")
     zip_ref.extractall(extractPathPrefix)
     zip_ref.close()
+    shutil.rmtree(extractPathPrefix + "/" + name, ignore_errors=True)
     os.rename(extractPathPrefix + "/" + name + "-master", extractPathPrefix + "/" + name)
     return
 
@@ -138,65 +139,39 @@ else:
     sys.exit(-1)
 print("")
 
-print("Step 8: Build Errors", flush=True)
-rc = subprocess.call([codeSmithyMakePath, "Build/Ishiko/Errors/Makefiles/VC14/IshikoErrors.sln"])
-if rc == 0:
-    print("Errors built successfully")
-else:
-    print("Failed to build Errors, exiting")
-    sys.exit(-1)
+def buildWithCodeSmithyMake(name, makefile):
+    rc = subprocess.call([codeSmithyMakePath, makefile])
+    if rc == 0:
+        print(name + " built successfully")
+    else:
+        print("Failed to build " + name + ", exiting")
+        sys.exit(-1)
+    return
+
+print("Step 8: Building Errors", flush=True)
+buildWithCodeSmithyMake("Errors", "Build/Ishiko/Errors/Makefiles/VC14/IshikoErrors.sln")
 print("")
 
-print("Step 9: Build TestFrameworkCore", flush=True)
-rc = subprocess.call([codeSmithyMakePath, "Build/Ishiko/TestFramework/Core/Makefiles/VC14/IshikoTestFrameworkCore.sln"])
-if rc == 0:
-    print("TestFrameworkCore built successfully")
-else:
-    print("Failed to build TestFrameworkCore, exiting")
-    sys.exit(-1)
+print("Step 9: Building TestFrameworkCore", flush=True)
+buildWithCodeSmithyMake("TestFrameworkCore", "Build/Ishiko/TestFramework/Core/Makefiles/VC14/IshikoTestFrameworkCore.sln")
 print("")
 
-print("Step 10: Build WindowsRegistry", flush=True)
-rc = subprocess.call([codeSmithyMakePath, "Build/Ishiko/WindowsRegistry/Makefiles/VC14/IshikoWindowsRegistry.sln"])
-if rc == 0:
-    print("WindowsRegistry built successfully")
-else:
-    print("Failed to build WindowsRegistry, exiting")
-    sys.exit(-1)
+print("Step 10: Building WindowsRegistry", flush=True)
+buildWithCodeSmithyMake("WindowsRegistry", "Build/Ishiko/WindowsRegistry/Makefiles/VC14/IshikoWindowsRegistry.sln")
 print("")
 
-print("Step 11: Build FileTypes", flush=True)
-rc = subprocess.call([codeSmithyMakePath, "Build/Ishiko/FileTypes/Makefiles/VC14/IshikoFileTypes.sln"])
-if rc == 0:
-    print("FileTypes built successfully")
-else:
-    print("Failed to build FileTypes, exiting")
-    sys.exit(-1)
+print("Step 11: Building FileTypes", flush=True)
+buildWithCodeSmithyMake("FileTypes", "Build/Ishiko/FileTypes/Makefiles/VC14/IshikoFileTypes.sln")
 print("")
 
-print("Step 12: Build CodeSmithy", flush=True)
-rc = subprocess.call([codeSmithyMakePath, "Build/CodeSmithy/UI/Makefiles/VC14/CodeSmithy.sln"])
-if rc == 0:
-    print("CodeSmithy built successfully")
-else:
-    print("Failed to build CodeSmithy, exiting")
-    sys.exit(-1)
+print("Step 12: Building CodeSmithy", flush=True)
+buildWithCodeSmithyMake("CodeSmithy", "Build/CodeSmithy/UI/Makefiles/VC14/CodeSmithy.sln")
 print("")
 
-print("Step 13: Build CodeSmithyCore tests", flush=True)
-rc = subprocess.call([codeSmithyMakePath, "Build/CodeSmithy/Tests/Core/Makefiles/VC14/CodeSmithyCoreTests.sln"])
-if rc == 0:
-    print("CodeSmithyCoreTests built successfully")
-else:
-    print("Failed to build CodeSmithyCoreTests, exiting")
-    sys.exit(-1)
+print("Step 13: Building CodeSmithyCore tests", flush=True)
+buildWithCodeSmithyMake("CodeSmithyCore", "Build/CodeSmithy/Tests/Core/Makefiles/VC14/CodeSmithyCoreTests.sln")
 print("")
 
-print("Step 14: Build CodeSmithyMake tests", flush=True)
-rc = subprocess.call([codeSmithyMakePath, "Build/CodeSmithy/Tests/Make/Makefiles/VC14/CodeSmithyMakeTests.sln"])
-if rc == 0:
-    print("CodeSmithyMakeTests built successfully")
-else:
-    print("Failed to build CodeSmithyMakeTests, exiting")
-    sys.exit(-1)
+print("Step 14: Building CodeSmithyMake tests", flush=True)
+buildWithCodeSmithyMake("CodeSmithyMake", "Build/CodeSmithy/Tests/Make/Makefiles/VC14/CodeSmithyMakeTests.sln")
 print("")
