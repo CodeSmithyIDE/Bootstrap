@@ -6,6 +6,14 @@ only really useful to me for my own projects.
 This repository contains build scripts to build the CodeSmithy IDE from
 scratch.
 
+## Usage
+
+The bootstrap build script is a Python 3 script. If you don't have Python 3
+installed get it from https://www.python.org.
+
+To build clone this repository then in the directory where you cloned it run
+python bootstrap.py.
+
 ## License
 
 Copyright (c) 2015-2017 Xavier Leclercq
