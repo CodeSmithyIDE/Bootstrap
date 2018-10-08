@@ -62,6 +62,10 @@ foundMSVC14 = os.path.isfile("C:/Program Files (x86)/Microsoft Visual Studio 14.
 if foundMSVC14:
     compilers.append("Visual Studio 2015")
     compilerPaths.append("C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/IDE/devenv.exe")
+foundMSVC2017 = os.path.isfile("C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/IDE/devenv.exe")
+if foundMSVC2017:
+    compilers.append("Visual Studio 2017")
+    compilerPaths.append("C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/IDE/devenv.exe")
 
 print("The following compilers have been found")
 for i, c in enumerate(compilers):
@@ -79,11 +83,11 @@ print("Step 3: Installing CMake\n", flush=True)
 cmakePath = ""
 if platformName == "Windows":
     if is64bit:
-        zip_ref = zipfile.ZipFile("CMake/cmake-3.6.1-win64-x64.zip", "r")
-        cmakePath = "cmake-3.6.1-win64-x64/bin/cmake.exe"
+        zip_ref = zipfile.ZipFile("CMake/cmake-3.12.3-win64-x64.zip", "r")
+        cmakePath = "cmake-3.12.3-win64-x64/bin/cmake.exe"
     else:
-        zip_ref = zipfile.ZipFile("CMake/cmake-3.6.1-win32-x86.zip", "r")
-        cmakePath = "cmake-3.6.1-win32-x86/bin/cmake.exe"
+        zip_ref = zipfile.ZipFile("CMake/cmake-3.12.3-win32-x86.zip", "r")
+        cmakePath = "cmake-3.12.3-win32-x86/bin/cmake.exe"
     zip_ref.extractall(".")
     zip_ref.close()
 
