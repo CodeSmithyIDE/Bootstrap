@@ -8,6 +8,9 @@ class Downloader:
     def __init__(self):
         pass
 
+    def run(self):
+        Downloader.fetchSource()
+
     def downloadAndUnzip(substep, organization, name, url):
         print("Step 1" + substep + ": Fetching " + name + " code from " + url, flush=True)
         downloadPath = "Downloads/" + name + "-master.zip"
