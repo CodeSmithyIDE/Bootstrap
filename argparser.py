@@ -9,5 +9,5 @@ class ArgParser:
             '--non-interactive', action='store_true',
             help='run the script in non-interactive mode')
 
-    def run(self):
+    def parse(self):
         return self.argParser.parse_args()

@@ -25,9 +25,9 @@ class Downloader:
         self.downloads.append(Download("wxWidgets"))
         self.downloads.append(Download("CodeSmithy", "CodeSmithyIDE"))
         
-    def run(self):
-        for download in self.downloads:
-            Downloader.downloadAndUnzip("a", download.subdir, download.name, download.url)
+    def download(self):
+        for download, i in zip(self.downloads, range(ord("a"), ord("z"))):
+            Downloader.downloadAndUnzip(chr(i), download.subdir, download.name, download.url)
 
     def downloadAndUnzip(substep, organization, name, url):
         print("Step 1" + substep + ": Fetching " + name + " code from " + url,
