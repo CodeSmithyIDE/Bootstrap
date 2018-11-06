@@ -12,6 +12,29 @@ class Download:
                    name + "/archive/master.zip"
         self.subdir = subdir
 
+    def download(self, substep):
+        print("Step 1" + substep + ": Fetching " + self.name + " code from " + self.url,
+              flush=True)
+        downloadPath = "Downloads/" + self.name + "-master.zip"
+        extractPathPrefix = "Build"
+        if len(self.subdir) > 0:
+            Path("Downloads/" + self.subdir).mkdir(exist_ok=True)
+            Path("Build/" + self.subdir).mkdir(exist_ok=True)
+            downloadPath = "Downloads/" + self.subdir + "/" + self.name + "-master.zip"
+            extractPathPrefix = "Build/" + self.subdir
+        urllib.request.urlretrieve(self.url, downloadPath)
+        print("Step 1" + substep + ": Unzipping " + downloadPath + "\n",
+              flush=True)
+        zip_ref = zipfile.ZipFile(downloadPath, "r")
+        zip_ref.extractall(extractPathPrefix)
+        zip_ref.close()
+        shutil.rmtree(extractPathPrefix + "/" + self.name, ignore_errors=True)
+        os.rename(extractPathPrefix + "/" + self.name + "-master",
+                  extractPathPrefix + "/" + self.name)
+
+    def unzip(self, substep):
+        pass
+
 
 class Downloader:
     def __init__(self):
@@ -27,25 +50,8 @@ class Downloader:
         
     def download(self):
         for download, i in zip(self.downloads, range(ord("a"), ord("z"))):
-            Downloader.downloadAndUnzip(chr(i), download.subdir, download.name, download.url)
+            download.download(chr(i))
 
-    def downloadAndUnzip(substep, organization, name, url):
-        print("Step 1" + substep + ": Fetching " + name + " code from " + url,
-              flush=True)
-        downloadPath = "Downloads/" + name + "-master.zip"
-        extractPathPrefix = "Build"
-        if len(organization) > 0:
-            Path("Downloads/" + organization).mkdir(exist_ok=True)
-            Path("Build/" + organization).mkdir(exist_ok=True)
-            downloadPath = "Downloads/" + organization + "/" + name + "-master.zip"
-            extractPathPrefix = "Build/" + organization
-        urllib.request.urlretrieve(url, downloadPath)
-        print("Step 1" + substep + ": Unzipping " + downloadPath + "\n",
-              flush=True)
-        zip_ref = zipfile.ZipFile(downloadPath, "r")
-        zip_ref.extractall(extractPathPrefix)
-        zip_ref.close()
-        shutil.rmtree(extractPathPrefix + "/" + name, ignore_errors=True)
-        os.rename(extractPathPrefix + "/" + name + "-master",
-                  extractPathPrefix + "/" + name)
-        return
+    def unzip(self):
+        for download, i in zip(self.downloads, range(ord("a"), ord("z"))):
+            download.unzip(i)        
