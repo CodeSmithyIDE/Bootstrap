@@ -10,30 +10,33 @@ class Download:
         self.name = name
         self.url = "https://github.com/CodeSmithyIDE/" + \
                    name + "/archive/master.zip"
-        self.subdir = subdir
+        Path("Downloads").mkdir(exist_ok=True)
+        if subdir == "":
+            self.downloadPath = "Downloads/" + self.name + "-master.zip"
+            self.extractPathPrefix = "Build"
+        else:
+            Path("Downloads/" + subdir).mkdir(exist_ok=True)
+            Path("Build/" + subdir).mkdir(exist_ok=True)
+            self.downloadPath = "Downloads/" + subdir + "/" + \
+                                self.name + "-master.zip"
+            self.extractPathPrefix = "Build/" + subdir
 
     def download(self, substep):
-        print("Step 1" + substep + ": Fetching " + self.name + " code from " + self.url,
+        print("Step 1" + substep + ": Fetching " + self.name +
+              " code from " + self.url,
               flush=True)
-        downloadPath = "Downloads/" + self.name + "-master.zip"
-        extractPathPrefix = "Build"
-        if len(self.subdir) > 0:
-            Path("Downloads/" + self.subdir).mkdir(exist_ok=True)
-            Path("Build/" + self.subdir).mkdir(exist_ok=True)
-            downloadPath = "Downloads/" + self.subdir + "/" + self.name + "-master.zip"
-            extractPathPrefix = "Build/" + self.subdir
-        urllib.request.urlretrieve(self.url, downloadPath)
-        print("Step 1" + substep + ": Unzipping " + downloadPath + "\n",
-              flush=True)
-        zip_ref = zipfile.ZipFile(downloadPath, "r")
-        zip_ref.extractall(extractPathPrefix)
-        zip_ref.close()
-        shutil.rmtree(extractPathPrefix + "/" + self.name, ignore_errors=True)
-        os.rename(extractPathPrefix + "/" + self.name + "-master",
-                  extractPathPrefix + "/" + self.name)
+        urllib.request.urlretrieve(self.url, self.downloadPath)
 
     def unzip(self, substep):
-        pass
+        print("Step 2" + substep + ": Unzipping " + self.downloadPath,
+              flush=True)
+        zip_ref = zipfile.ZipFile(self.downloadPath, "r")
+        zip_ref.extractall(self.extractPathPrefix)
+        zip_ref.close()
+        shutil.rmtree(self.extractPathPrefix + "/" + self.name,
+                      ignore_errors=True)
+        os.rename(self.extractPathPrefix + "/" + self.name + "-master",
+                  self.extractPathPrefix + "/" + self.name)
 
 
 class Downloader:
@@ -47,11 +50,11 @@ class Downloader:
         self.downloads.append(Download("libgit2"))
         self.downloads.append(Download("wxWidgets"))
         self.downloads.append(Download("CodeSmithy", "CodeSmithyIDE"))
-        
+
     def download(self):
         for download, i in zip(self.downloads, range(ord("a"), ord("z"))):
             download.download(chr(i))
 
     def unzip(self):
         for download, i in zip(self.downloads, range(ord("a"), ord("z"))):
-            download.unzip(i)        
+            download.unzip(chr(i))
