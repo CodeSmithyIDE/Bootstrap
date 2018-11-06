@@ -1,5 +1,6 @@
 import json
 
+
 class State:
     def __init__(self):
         self.previousStateFound = False
@@ -9,7 +10,7 @@ class State:
                 state = json.loads(file.read())
                 self.downloadComplete = state["downloadComplete"]
                 self.previousStateFound = True
-        except:
+        except IOError:
             self.save()
 
     def reset(self):
@@ -23,5 +24,5 @@ class State:
 
     def save(self):
         with open('state.json', 'w+') as file:
-            state = { "downloadComplete": self.downloadComplete }
+            state = {"downloadComplete": self.downloadComplete}
             file.write(json.dumps(state))
