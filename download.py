@@ -10,25 +10,23 @@ class Download:
         self.name = name
         self.url = "https://github.com/CodeSmithyIDE/" + \
                    name + "/archive/master.zip"
-        Path("Downloads").mkdir(exist_ok=True)
         if subdir == "":
             self.downloadPath = "Downloads/" + self.name + "-master.zip"
             self.extractPathPrefix = "Build"
         else:
-            Path("Downloads/" + subdir).mkdir(exist_ok=True)
-            Path("Build/" + subdir).mkdir(exist_ok=True)
             self.downloadPath = "Downloads/" + subdir + "/" + \
                                 self.name + "-master.zip"
             self.extractPathPrefix = "Build/" + subdir
 
     def download(self, substep):
-        print("Step 1" + substep + ": Fetching " + self.name +
+        print("    Step 1" + substep + ": Fetching " + self.name +
               " code from " + self.url,
               flush=True)
+        Path(self.downloadPath).parent.mkdir(parents=True, exist_ok=True)
         urllib.request.urlretrieve(self.url, self.downloadPath)
 
     def unzip(self, substep):
-        print("Step 2" + substep + ": Unzipping " + self.downloadPath,
+        print("    Step 2" + substep + ": Unzipping " + self.downloadPath,
               flush=True)
         zip_ref = zipfile.ZipFile(self.downloadPath, "r")
         zip_ref.extractall(self.extractPathPrefix)
