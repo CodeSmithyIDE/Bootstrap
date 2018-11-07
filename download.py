@@ -11,30 +11,30 @@ class Download:
         self.url = "https://github.com/CodeSmithyIDE/" + \
                    name + "/archive/master.zip"
         if subdir == "":
-            self.downloadPath = "Downloads/" + self.name + "-master.zip"
-            self.extractPathPrefix = "Build"
+            self.download_path = "Downloads/" + self.name + "-master.zip"
+            self.extract_path_prefix = "Build"
         else:
-            self.downloadPath = "Downloads/" + subdir + "/" + \
+            self.download_path = "Downloads/" + subdir + "/" + \
                                 self.name + "-master.zip"
-            self.extractPathPrefix = "Build/" + subdir
+            self.extract_path_prefix = "Build/" + subdir
 
     def download(self, substep):
         print("    Step 1" + substep + ": Fetching " + self.name +
               " code from " + self.url,
               flush=True)
-        Path(self.downloadPath).parent.mkdir(parents=True, exist_ok=True)
-        urllib.request.urlretrieve(self.url, self.downloadPath)
+        Path(self.download_path).parent.mkdir(parents=True, exist_ok=True)
+        urllib.request.urlretrieve(self.url, self.download_path)
 
     def unzip(self, substep):
-        print("    Step 2" + substep + ": Unzipping " + self.downloadPath,
+        print("    Step 2" + substep + ": Unzipping " + self.download_path,
               flush=True)
-        zip_ref = zipfile.ZipFile(self.downloadPath, "r")
-        zip_ref.extractall(self.extractPathPrefix)
+        zip_ref = zipfile.ZipFile(self.download_path, "r")
+        zip_ref.extractall(self.extract_path_prefix)
         zip_ref.close()
-        shutil.rmtree(self.extractPathPrefix + "/" + self.name,
+        shutil.rmtree(self.extract_path_prefix + "/" + self.name,
                       ignore_errors=True)
-        os.rename(self.extractPathPrefix + "/" + self.name + "-master",
-                  self.extractPathPrefix + "/" + self.name)
+        os.rename(self.extract_path_prefix + "/" + self.name + "-master",
+                  self.extract_path_prefix + "/" + self.name)
 
 
 class Downloader:

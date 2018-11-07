@@ -7,8 +7,8 @@ class Compiler:
         self.short_name = short_name
         self.executable = executable
 
-    def compile(self, makefilePath):
-        return subprocess.call([self.executable, makefilePath, "/build", "Debug"])
+    def compile(self, makefile_path):
+        return subprocess.call([self.executable, makefile_path, "/build", "Debug"])
 
 class Compilers:
     def __init__(self):
@@ -20,7 +20,7 @@ class Compilers:
         if foundMSVC2017:
             self.compilers.append(Compiler("Visual Studio 2017", "VC15", "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/IDE/devenv.exe"))
 
-    def showCompilerList(self):
+    def show_compiler_list(self):
         if len(self.compilers) != 0:
             print("    The following compilers have been found")
             for i, compiler in enumerate(self.compilers):
