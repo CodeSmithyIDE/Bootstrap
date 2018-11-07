@@ -3,26 +3,26 @@ import json
 
 class State:
     def __init__(self):
-        self.previousStateFound = False
-        self.downloadComplete = False
+        self.previous_state_found = False
+        self.download_complete = False
         try:
             with open('state.json', 'r') as file:
                 state = json.loads(file.read())
-                self.downloadComplete = state["downloadComplete"]
-                self.previousStateFound = True
+                self.download_complete = state["download_complete"]
+                self.previous_state_found = True
         except IOError:
             self.save()
 
     def reset(self):
-        self.previousStateFound = False
-        self.downloadComplete = False
+        self.previous_state_found = False
+        self.download_complete = False
         self.save()
 
-    def setDownloadComplete(self):
-        self.downloadComplete = True
+    def set_download_complete(self):
+        self.download_complete = True
         self.save()
 
     def save(self):
         with open('state.json', 'w+') as file:
-            state = {"downloadComplete": self.downloadComplete}
+            state = {"download_complete": self.download_complete}
             file.write(json.dumps(state))

@@ -3,11 +3,11 @@ import argparse
 
 class ArgParser:
     def __init__(self):
-        self.argParser = argparse.ArgumentParser(
+        self.arg_parser = argparse.ArgumentParser(
             description='Do a bootstrap build of CodeSmithy.')
-        self.argParser.add_argument(
+        self.arg_parser.add_argument(
             '--non-interactive', action='store_true',
             help='run the script in non-interactive mode')
 
     def parse(self):
-        return self.argParser.parse_args()
+        return self.arg_parser.parse_args()
