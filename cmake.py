@@ -1,3 +1,4 @@
+import os
 import zipfile
 import subprocess
 
@@ -18,7 +19,8 @@ class CMake:
             zip_ref.close()
 
     def compile(self):
-        with open('libgit2.log', "w") as output_file:
+        os.chdir("Build/libgit2")
+        with open("../libgit2.log", "w") as output_file:
             rc = subprocess.call(["../../" + self.cmake_path, "."], stdout=output_file)
             rc = subprocess.call(["../../" + self.cmake_path, "--build", "."], stdout=output_file)
             if rc == 0:
@@ -26,3 +28,4 @@ class CMake:
             else:
                 print("    Failed to build libgit2, exiting")
                 sys.exit(-1)
+        os.chdir("../..")
