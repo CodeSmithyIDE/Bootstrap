@@ -42,34 +42,32 @@ print("")
 shutil.rmtree("Build", ignore_errors=True)
 Path("Build").mkdir(exist_ok=True)
 
-output.print_step_title("Downloading source packages")
 downloader = Downloader()
+compilers = Compilers()
+
+output.print_step_title("Downloading source packages")
 if state.download_complete == False:
     shutil.rmtree("Downloads", ignore_errors=True)
     downloader.download()
 else:
     print("    Using previous execution")
-    
 state.set_download_complete()
 output.next_step()
 
 print("")
-output.print_step_title("Unzipping source packages")
-downloader.unzip()
-output.next_step()
-
-print("")
 output.print_step_title("Finding compilers")
-compilers = Compilers()
-compilers.show_compiler_list()
-
-if len(compilers.compilers) == 0:
-    print("")
-    print("ERROR: No compilers found, exiting")
-    sys.exit(-1);
-
-selected_compiler_index = (int(input("    Select the compiler to use: ")) - 1)
-compiler = compilers.compilers[selected_compiler_index]
+if state.selected_compiler == "":
+    compilers.show_compiler_list()
+    if len(compilers.compilers) == 0:
+        print("")
+        print("ERROR: No compilers found, exiting")
+        sys.exit(-1);
+    selected_compiler_index = (int(input("    Select the compiler to use: ")) - 1)
+    compiler = compilers.compilers[selected_compiler_index]
+else:
+    compiler = compilers.find_by_name(state.selected_compiler)
+    print("    Using previous selection: " + compiler.name)
+state.set_selected_compiler(compiler.name)
 output.next_step()
 
 # CMake is not easily buildable on Windows so we rely on a binary distribution
@@ -80,13 +78,18 @@ cmake.install(platform_name, is64bit)
 print("    CMake installed successfully")
 output.next_step()
 
+os.environ["ISHIKO"] = os.getcwd() + "/Build/Ishiko"
+os.environ["CODESMITHY"] = os.getcwd() + "/Build/CodeSmithyIDE/CodeSmithy"
+
+print("")
+output.print_step_title("Unzipping source packages")
+downloader.unzip()
+output.next_step()
+
 print("")
 output.print_step_title("Building libgit2")
 cmake.compile()
 output.next_step()
-
-os.environ["ISHIKO"] = os.getcwd() + "/Build/Ishiko"
-os.environ["CODESMITHY"] = os.getcwd() + "/Build/CodeSmithyIDE/CodeSmithy"
 
 projects = Projects()
 projects.build(compiler, output)

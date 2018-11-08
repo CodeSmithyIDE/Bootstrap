@@ -22,6 +22,10 @@ class State:
         self.download_complete = True
         self.save()
 
+    def set_selected_compiler(self, compiler):
+        self.selected_compiler = compiler
+        self.save()
+
     def save(self):
         with open('state.json', 'w+') as file:
             state = {"download_complete": self.download_complete,

@@ -27,3 +27,9 @@ class Compilers:
                 print("        " + str(i+1) + ") " + compiler.name)
         else:
             print("    No compilers have been found")
+
+    def find_by_name(self, name):
+        for compiler in self.compilers:
+            if compiler.name == name:
+                return compiler
+        return None
