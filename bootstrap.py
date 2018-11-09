@@ -12,89 +12,92 @@ from download import Downloader
 from cmake import CMake
 from compilers import Compilers
 
-print("\nCodeSmithy bootstrap build")
-print("--------------------------\n")
+def main():
+    print("\nCodeSmithy bootstrap build")
+    print("--------------------------\n")
 
-output = Output()
-args = ArgParser().parse()
-state = State()
+    output = Output()
+    args = ArgParser().parse()
+    state = State()
 
-if state.previous_state_found:
-    resume = ""
-    while resume != "y" and resume != "n":
-        resume = input(
-            "Previous execution detected. Do you want to resume it? [y/n] ")
-    if resume == "n":
-        state.reset()
-        shutil.rmtree("Build", ignore_errors=True)
+    if state.previous_state_found:
+        resume = ""
+        while resume != "y" and resume != "n":
+            resume = input(
+                "Previous execution detected. Do you want to resume it? [y/n] ")
+        if resume == "n":
+            state.reset()
+            shutil.rmtree("Build", ignore_errors=True)
 
-platform_name = platform.system()
-is64bit = False
-if platform.machine() == "AMD64":
-    is64bit = True
+    platform_name = platform.system()
+    is64bit = False
+    if platform.machine() == "AMD64":
+        is64bit = True
 
-print("Platform: " + platform_name)
-if is64bit:
-    print("Architecture: 64 bit")
-else:
-    print("Architecture: 32 bit")
-print("")
+    print("Platform: " + platform_name)
+    if is64bit:
+        print("Architecture: 64 bit")
+    else:
+        print("Architecture: 32 bit")
+    print("")
 
-Path("Build").mkdir(exist_ok=True)
+    Path("Build").mkdir(exist_ok=True)
 
-projects = Projects()
-downloader = Downloader()
-compilers = Compilers()
-cmake = CMake()
+    projects = Projects()
+    downloader = Downloader()
+    compilers = Compilers()
+    cmake = CMake()
 
-output.print_step_title("Downloading source packages")
-if state.download_complete == False:
-    shutil.rmtree("Downloads", ignore_errors=True)
-    downloader.download()
-else:
-    print("    Using previous execution")
-state.set_download_complete()
-output.next_step()
+    output.print_step_title("Downloading source packages")
+    if state.download_complete == False:
+        shutil.rmtree("Downloads", ignore_errors=True)
+        downloader.download()
+    else:
+        print("    Using previous execution")
+    state.set_download_complete()
+    output.next_step()
 
-print("")
-output.print_step_title("Finding compilers")
-if state.selected_compiler == "":
-    compilers.show_compiler_list()
-    if len(compilers.compilers) == 0:
-        print("")
-        print("ERROR: No compilers found, exiting")
-        sys.exit(-1);
-    selected_compiler_index = (int(input("    Select the compiler to use: ")) - 1)
-    compiler = compilers.compilers[selected_compiler_index]
-else:
-    compiler = compilers.find_by_name(state.selected_compiler)
-    print("    Using previous selection: " + compiler.name)
-state.set_selected_compiler(compiler.name)
-output.next_step()
+    print("")
+    output.print_step_title("Finding compilers")
+    if state.selected_compiler == "":
+        compilers.show_compiler_list()
+        if len(compilers.compilers) == 0:
+            print("")
+            print("ERROR: No compilers found, exiting")
+            sys.exit(-1);
+        selected_compiler_index = (int(input("    Select the compiler to use: ")) - 1)
+        compiler = compilers.compilers[selected_compiler_index]
+    else:
+        compiler = compilers.find_by_name(state.selected_compiler)
+        print("    Using previous selection: " + compiler.name)
+    state.set_selected_compiler(compiler.name)
+    output.next_step()
 
-# CMake is not easily buildable on Windows so we rely on a binary distribution
-print("")
-output.print_step_title("Installing CMake")
-if state.cmake_path == "":
-    cmake.install(platform_name, is64bit)
-    print("    CMake installed successfully")
-else:
-    cmake.path = state.cmake_path
-    print("    Using previous installation: " + cmake.path)
-state.set_cmake_path(cmake.path)
-output.next_step()
+    # CMake is not easily buildable on Windows so we rely on a binary distribution
+    print("")
+    output.print_step_title("Installing CMake")
+    if state.cmake_path == "":
+        cmake.install(platform_name, is64bit)
+        print("    CMake installed successfully")
+    else:
+        cmake.path = state.cmake_path
+        print("    Using previous installation: " + cmake.path)
+    state.set_cmake_path(cmake.path)
+    output.next_step()
 
-os.environ["ISHIKO"] = os.getcwd() + "/Build/Ishiko"
-os.environ["CODESMITHY"] = os.getcwd() + "/Build/CodeSmithyIDE/CodeSmithy"
+    os.environ["ISHIKO"] = os.getcwd() + "/Build/Ishiko"
+    os.environ["CODESMITHY"] = os.getcwd() + "/Build/CodeSmithyIDE/CodeSmithy"
 
-print("")
-output.print_step_title("Unzipping source packages")
-downloader.unzip()
-output.next_step()
+    print("")
+    output.print_step_title("Unzipping source packages")
+    downloader.unzip()
+    output.next_step()
 
-projects.build(cmake, compiler, output)
+    projects.build(cmake, compiler, output)
 
-codeSmithyMakePath = "Build/CodeSmithyIDE/CodeSmithy/Bin/Win32/CodeSmithyMake.exe"
+    codeSmithyMakePath = "Build/CodeSmithyIDE/CodeSmithy/Bin/Win32/CodeSmithyMake.exe"
+
+main()
 
 def buildWithCodeSmithyMake(name, makefile):
     rc = subprocess.call([codeSmithyMakePath, makefile])
