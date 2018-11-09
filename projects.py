@@ -1,4 +1,5 @@
 import re
+from download import Downloader
 
 
 class Project:
@@ -32,6 +33,7 @@ class Project:
 
 class Projects:
     def __init__(self):
+        self.downloader = Downloader()
         self.projects = []
         self.projects.append(Project(
             "libgit2",
@@ -46,6 +48,13 @@ class Projects:
             "CodeSmithyIDE/CodeSmithy/Make",
             "Build/CodeSmithyIDE/CodeSmithy/Core/Makefiles/$(compiler_short_name)/CodeSmithyMake.sln"))
 
+    def download(self):
+        self.downloader.download()
+
     def build(self, cmake, compiler, output):
+        print("")
+        output.print_step_title("Unzipping source packages")
+        self.downloader.unzip()
+        output.next_step()
         for project in self.projects:
             project.build(cmake, compiler, output)

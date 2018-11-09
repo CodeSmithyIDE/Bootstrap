@@ -8,7 +8,6 @@ from output import Output
 from argparser import ArgParser
 from state import State
 from projects import Projects
-from download import Downloader
 from cmake import CMake
 from compilers import Compilers
 
@@ -22,11 +21,11 @@ def try_restore_previous_state(state):
             state.reset()
             shutil.rmtree("Build", ignore_errors=True)
 
-def download_source_packages(downloader, state, output):
+def download_source_packages(projects, state, output):
     output.print_step_title("Downloading source packages")
     if state.download_complete == False:
         shutil.rmtree("Downloads", ignore_errors=True)
-        downloader.download()
+        projects.download()
     else:
         print("    Using previous execution")
     state.set_download_complete()
@@ -90,11 +89,10 @@ def main():
     Path("Build").mkdir(exist_ok=True)
 
     projects = Projects()
-    downloader = Downloader()
     compilers = Compilers()
     cmake = CMake()
 
-    download_source_packages(downloader, state, output)
+    download_source_packages(projects, state, output)
 
     compiler = select_compiler(compilers, state, output)
 
@@ -102,11 +100,6 @@ def main():
 
     os.environ["ISHIKO"] = os.getcwd() + "/Build/Ishiko"
     os.environ["CODESMITHY"] = os.getcwd() + "/Build/CodeSmithyIDE/CodeSmithy"
-
-    print("")
-    output.print_step_title("Unzipping source packages")
-    downloader.unzip()
-    output.next_step()
 
     projects.build(cmake, compiler, output)
 
