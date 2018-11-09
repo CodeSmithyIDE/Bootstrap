@@ -2,6 +2,7 @@ import os
 import zipfile
 import subprocess
 import shutil
+from pathlib import Path
 
 class CMake:
     def __init__self(self):
@@ -20,8 +21,9 @@ class CMake:
             zip_ref.extractall("Build")
             zip_ref.close()
 
-    def compile(self):
-        os.chdir("Build/libgit2")
+    def compile(self, makefile_path):
+        previous_working_dir = os.getcwd()
+        os.chdir(Path(makefile_path).parent)
         with open("../libgit2.log", "w") as output_file:
             rc = subprocess.call(["../../" + self.path, "."], stdout=output_file)
             rc = subprocess.call(["../../" + self.path, "--build", "."], stdout=output_file)
@@ -30,4 +32,4 @@ class CMake:
             else:
                 print("    Failed to build libgit2, exiting")
                 sys.exit(-1)
-        os.chdir("../..")
+        os.chdir(previous_working_dir)

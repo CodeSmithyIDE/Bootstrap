@@ -6,7 +6,7 @@ class Project:
         self.name = name
         self.makefile_path = makefile_path
 
-    def build(self, compiler, output):
+    def build(self, cmake, compiler, output):
         print("")
         output.print_step_title("Building " + self.name)
         try:
@@ -34,6 +34,6 @@ class Projects:
             "CodeSmithyIDE/CodeSmithy/Make",
             "Build/CodeSmithyIDE/CodeSmithy/Core/Makefiles/$(compiler_short_name)/CodeSmithyMake.sln"))
 
-    def build(self, compiler, output):
+    def build(self, cmake, compiler, output):
         for project in self.projects:
-            project.build(compiler, output)
+            project.build(cmake, compiler, output)
