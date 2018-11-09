@@ -21,15 +21,17 @@ class CMake:
             zip_ref.extractall("Build")
             zip_ref.close()
 
-    def compile(self, makefile_path):
+    def compile(self, makefile_path, logfile):
         previous_working_dir = os.getcwd()
         os.chdir(Path(makefile_path).parent)
-        with open("../libgit2.log", "w") as output_file:
-            rc = subprocess.call(["../../" + self.path, "."], stdout=output_file)
-            rc = subprocess.call(["../../" + self.path, "--build", "."], stdout=output_file)
+        rc = 0
+        with open(logfile, "w") as output_file:
+            rc = subprocess.call(
+                [previous_working_dir + "/" + self.path, "."],
+                stdout=output_file)
             if rc == 0:
-                print("    libgit2 build successfully")
-            else:
-                print("    Failed to build libgit2, exiting")
-                sys.exit(-1)
+                rc = subprocess.call(
+                    [previous_working_dir + "/" + self.path, "--build", "."],
+                    stdout=output_file)
         os.chdir(previous_working_dir)
+        return rc
