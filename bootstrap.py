@@ -42,6 +42,7 @@ print("")
 
 Path("Build").mkdir(exist_ok=True)
 
+projects = Projects()
 downloader = Downloader()
 compilers = Compilers()
 cmake = CMake()
@@ -96,7 +97,6 @@ output.print_step_title("Building libgit2")
 cmake.compile()
 output.next_step()
 
-projects = Projects()
 projects.build(compiler, output)
 
 codeSmithyMakePath = "Build/CodeSmithyIDE/CodeSmithy/Bin/Win32/CodeSmithyMake.exe"
