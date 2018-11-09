@@ -51,6 +51,20 @@ def select_compiler(compilers, state, output):
     output.next_step()
     return compiler
 
+def install_cmake(cmake, platform_name, is64bit, state, output):
+    # CMake is not easily buildable on Windows so we rely on a binary
+    # distribution
+    print("")
+    output.print_step_title("Installing CMake")
+    if state.cmake_path == "":
+        cmake.install(platform_name, is64bit)
+        print("    CMake installed successfully")
+    else:
+        cmake.path = state.cmake_path
+        print("    Using previous installation: " + cmake.path)
+    state.set_cmake_path(cmake.path)
+    output.next_step()
+
 def main():
     print("\nCodeSmithy bootstrap build")
     print("--------------------------\n")
@@ -84,17 +98,7 @@ def main():
 
     compiler = select_compiler(compilers, state, output)
 
-    # CMake is not easily buildable on Windows so we rely on a binary distribution
-    print("")
-    output.print_step_title("Installing CMake")
-    if state.cmake_path == "":
-        cmake.install(platform_name, is64bit)
-        print("    CMake installed successfully")
-    else:
-        cmake.path = state.cmake_path
-        print("    Using previous installation: " + cmake.path)
-    state.set_cmake_path(cmake.path)
-    output.next_step()
+    install_cmake(cmake, platform_name, is64bit, state, output)
 
     os.environ["ISHIKO"] = os.getcwd() + "/Build/Ishiko"
     os.environ["CODESMITHY"] = os.getcwd() + "/Build/CodeSmithyIDE/CodeSmithy"
