@@ -12,14 +12,7 @@ from download import Downloader
 from cmake import CMake
 from compilers import Compilers
 
-def main():
-    print("\nCodeSmithy bootstrap build")
-    print("--------------------------\n")
-
-    output = Output()
-    args = ArgParser().parse()
-    state = State()
-
+def try_restore_previous_state(state):
     if state.previous_state_found:
         resume = ""
         while resume != "y" and resume != "n":
@@ -28,6 +21,26 @@ def main():
         if resume == "n":
             state.reset()
             shutil.rmtree("Build", ignore_errors=True)
+
+def download_source_packages(downloader, state, output):
+    output.print_step_title("Downloading source packages")
+    if state.download_complete == False:
+        shutil.rmtree("Downloads", ignore_errors=True)
+        downloader.download()
+    else:
+        print("    Using previous execution")
+    state.set_download_complete()
+    output.next_step()
+
+def main():
+    print("\nCodeSmithy bootstrap build")
+    print("--------------------------\n")
+
+    output = Output()
+    args = ArgParser().parse()
+    state = State()
+
+    try_restore_previous_state(state)
 
     platform_name = platform.system()
     is64bit = False
@@ -48,14 +61,7 @@ def main():
     compilers = Compilers()
     cmake = CMake()
 
-    output.print_step_title("Downloading source packages")
-    if state.download_complete == False:
-        shutil.rmtree("Downloads", ignore_errors=True)
-        downloader.download()
-    else:
-        print("    Using previous execution")
-    state.set_download_complete()
-    output.next_step()
+    download_source_packages(downloader, state, output)
 
     print("")
     output.print_step_title("Finding compilers")
