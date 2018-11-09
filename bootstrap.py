@@ -92,11 +92,6 @@ output.print_step_title("Unzipping source packages")
 downloader.unzip()
 output.next_step()
 
-print("")
-output.print_step_title("Building libgit2")
-cmake.compile("Build/libgit2/CMakeLists.txt")
-output.next_step()
-
 projects.build(cmake, compiler, output)
 
 codeSmithyMakePath = "Build/CodeSmithyIDE/CodeSmithy/Bin/Win32/CodeSmithyMake.exe"
