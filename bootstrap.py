@@ -32,6 +32,25 @@ def download_source_packages(downloader, state, output):
     state.set_download_complete()
     output.next_step()
 
+def select_compiler(compilers, state, output):
+    print("")
+    output.print_step_title("Finding compilers")
+    compiler = None
+    if state.selected_compiler == "":
+        compilers.show_compiler_list()
+        if len(compilers.compilers) == 0:
+            print("")
+            print("ERROR: No compilers found, exiting")
+            sys.exit(-1);
+        selected_compiler_index = (int(input("    Select the compiler to use: ")) - 1)
+        compiler = compilers.compilers[selected_compiler_index]
+    else:
+        compiler = compilers.find_by_name(state.selected_compiler)
+        print("    Using previous selection: " + compiler.name)
+    state.set_selected_compiler(compiler.name)
+    output.next_step()
+    return compiler
+
 def main():
     print("\nCodeSmithy bootstrap build")
     print("--------------------------\n")
@@ -63,21 +82,7 @@ def main():
 
     download_source_packages(downloader, state, output)
 
-    print("")
-    output.print_step_title("Finding compilers")
-    if state.selected_compiler == "":
-        compilers.show_compiler_list()
-        if len(compilers.compilers) == 0:
-            print("")
-            print("ERROR: No compilers found, exiting")
-            sys.exit(-1);
-        selected_compiler_index = (int(input("    Select the compiler to use: ")) - 1)
-        compiler = compilers.compilers[selected_compiler_index]
-    else:
-        compiler = compilers.find_by_name(state.selected_compiler)
-        print("    Using previous selection: " + compiler.name)
-    state.set_selected_compiler(compiler.name)
-    output.next_step()
+    compiler = select_compiler(compilers, state, output)
 
     # CMake is not easily buildable on Windows so we rely on a binary distribution
     print("")
