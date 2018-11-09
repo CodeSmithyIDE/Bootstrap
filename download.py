@@ -28,11 +28,13 @@ class Download:
     def unzip(self, substep):
         print("    Step 2" + substep + ": Unzipping " + self.download_path,
               flush=True)
+        shutil.rmtree(self.extract_path_prefix + "/" + self.name,
+                      ignore_errors=True)
+        shutil.rmtree(self.extract_path_prefix + "/" + self.name + "-master",
+                      ignore_errors=True)
         zip_ref = zipfile.ZipFile(self.download_path, "r")
         zip_ref.extractall(self.extract_path_prefix)
         zip_ref.close()
-        shutil.rmtree(self.extract_path_prefix + "/" + self.name,
-                      ignore_errors=True)
         os.rename(self.extract_path_prefix + "/" + self.name + "-master",
                   self.extract_path_prefix + "/" + self.name)
 

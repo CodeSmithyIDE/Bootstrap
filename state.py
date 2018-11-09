@@ -9,7 +9,7 @@ class State:
                 state = json.loads(file.read())
                 self.download_complete = state["download_complete"]
                 self.selected_compiler = state["selected_compiler"]
-                self.cmake_installed = state["cmake_installed"]
+                self.cmake_path = state["cmake_path"]
                 self.previous_state_found = True
         except IOError:
             self.save()
@@ -26,15 +26,19 @@ class State:
         self.selected_compiler = compiler
         self.save()
 
+    def set_cmake_path(self, path):
+        self.cmake_path = path
+        self.save()
+
     def save(self):
         with open('state.json', 'w+') as file:
             state = {"download_complete": self.download_complete,
                      "selected_compiler": self.selected_compiler,
-                     "cmake_installed": self.cmake_installed}
+                     "cmake_path": self.cmake_path}
             file.write(json.dumps(state))
 
     def reset_variables(self):
         self.previous_state_found = False
         self.download_complete = False
         self.selected_compiler = ""
-        self.cmake_installed = False
+        self.cmake_path = ""

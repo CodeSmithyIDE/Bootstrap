@@ -26,6 +26,7 @@ if state.previous_state_found:
             "Previous execution detected. Do you want to resume it? [y/n] ")
     if resume == "n":
         state.reset()
+        shutil.rmtree("Build", ignore_errors=True)
 
 platform_name = platform.system()
 is64bit = False
@@ -39,11 +40,11 @@ else:
     print("Architecture: 32 bit")
 print("")
 
-shutil.rmtree("Build", ignore_errors=True)
 Path("Build").mkdir(exist_ok=True)
 
 downloader = Downloader()
 compilers = Compilers()
+cmake = CMake()
 
 output.print_step_title("Downloading source packages")
 if state.download_complete == False:
@@ -73,9 +74,13 @@ output.next_step()
 # CMake is not easily buildable on Windows so we rely on a binary distribution
 print("")
 output.print_step_title("Installing CMake")
-cmake = CMake()
-cmake.install(platform_name, is64bit)
-print("    CMake installed successfully")
+if state.cmake_path == "":
+    cmake.install(platform_name, is64bit)
+    print("    CMake installed successfully")
+else:
+    cmake.path = state.cmake_path
+    print("    Using previous installation: " + cmake.path)
+state.set_cmake_path(cmake.path)
 output.next_step()
 
 os.environ["ISHIKO"] = os.getcwd() + "/Build/Ishiko"
