@@ -109,7 +109,7 @@ def main():
 
         compiler = select_compiler(compilers, input, state, output)
         install_cmake(cmake, platform_name, is64bit, state, output)
-        projects.build(cmake, compiler, output)
+        projects.build(cmake, compiler, input, output)
     except RuntimeError as error:
         print("")
         print("ERROR:", error)

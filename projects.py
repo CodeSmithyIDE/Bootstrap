@@ -8,7 +8,7 @@ class Project:
         self.name = name
         self.makefile_path = "Build/" + name + "/" + makefile_path
 
-    def build(self, cmake, compiler, output):
+    def build(self, cmake, compiler, input, output):
         print("")
         output.print_step_title("Building " + self.name)
         try:
@@ -21,7 +21,7 @@ class Project:
                 resolved_makefile_path = re.sub(r"\$\(compiler_short_name\)",
                                                 compiler.short_name,
                                                 self.makefile_path)
-                compiler.compile(resolved_makefile_path)
+                compiler.compile(resolved_makefile_path, input)
             print("    Project build successfully")
         except RuntimeError:
             print("    Failed to build project")
@@ -66,10 +66,10 @@ class Projects:
     def download(self):
         self.downloader.download()
 
-    def build(self, cmake, compiler, output):
+    def build(self, cmake, compiler, input, output):
         print("")
         output.print_step_title("Unzipping source packages")
         self.downloader.unzip()
         output.next_step()
         for project in self.projects:
-            project.build(cmake, compiler, output)
+            project.build(cmake, compiler, input, output)

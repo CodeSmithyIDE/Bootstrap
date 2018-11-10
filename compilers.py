@@ -7,11 +7,14 @@ class Compiler:
         self.short_name = short_name
         self.executable = executable
 
-    def compile(self, makefile_path):
+    def compile(self, makefile_path, input):
         try:
             subprocess.check_call([self.executable, makefile_path,
                                    "/build", "Debug"])
         except subprocess.CalledProcessError:
+            launchIDE = input.query("    Compilation failed. Do you you want to launch the IDE? [y/n]", ["y", "n"])
+            if launchIDE == "y":
+                subprocess.Popen([self.executable, makefile_path])
             raise RuntimeError("Compilation of " + makefile_path + " failed.")
 
 
