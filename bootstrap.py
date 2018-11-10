@@ -34,7 +34,7 @@ def download_source_packages(projects, state, output):
     output.next_step()
 
 
-def select_compiler(compilers, state, output):
+def select_compiler(compilers, input, state, output):
     print("")
     output.print_step_title("Finding compilers")
     compiler = None
@@ -43,7 +43,11 @@ def select_compiler(compilers, state, output):
         if len(compilers.compilers) == 0:
             print("")
             raise RuntimeError("No compilers found")
-        selected_compiler_index = (int(input("    Select the compiler to use: ")) - 1)
+        valid_answers = []
+        for i in range(1, len(compilers.compilers) + 1):
+            valid_answers.append(str(i))
+        answer = input.query("    Select the compiler to use:", valid_answers)
+        selected_compiler_index = (int(answer) - 1)
         compiler = compilers.compilers[selected_compiler_index]
     else:
         compiler = compilers.find_by_name(state.selected_compiler)
@@ -103,7 +107,7 @@ def main():
         os.environ["ISHIKO"] = os.getcwd() + "/Build/Ishiko"
         os.environ["CODESMITHY"] = os.getcwd() + "/Build/CodeSmithyIDE/CodeSmithy"
 
-        compiler = select_compiler(compilers, state, output)
+        compiler = select_compiler(compilers, input, state, output)
         install_cmake(cmake, platform_name, is64bit, state, output)
         projects.build(cmake, compiler, output)
     except RuntimeError as error:
@@ -113,7 +117,9 @@ def main():
 
     codeSmithyMakePath = "Build/CodeSmithyIDE/CodeSmithy/Bin/Win32/CodeSmithyMake.exe"
 
+
 main()
+
 
 def buildWithCodeSmithyMake(name, makefile):
     rc = subprocess.call([codeSmithyMakePath, makefile])
@@ -123,6 +129,7 @@ def buildWithCodeSmithyMake(name, makefile):
         print("Failed to build " + name + ", exiting")
         sys.exit(-1)
     return
+
 
 print("Step 9: Building Errors", flush=True)
 buildWithCodeSmithyMake("Errors", "Build/Ishiko/Errors/Makefiles/VC14/IshikoErrors.sln")
