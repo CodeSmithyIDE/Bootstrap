@@ -6,7 +6,7 @@ from download import Download
 class Project:
     def __init__(self, name, makefile_path):
         self.name = name
-        self.makefile_path = makefile_path        
+        self.makefile_path = "Build/" + name + "/" + makefile_path
 
     def build(self, cmake, compiler, output):
         print("")
@@ -38,16 +38,16 @@ class Projects:
         self.projects = []
         self.projects.append(Project(
             "libgit2",
-            "Build/libgit2/CMakeLists.txt"))
+            "CMakeLists.txt"))
         self.projects.append(Project(
             "Ishiko/Process",
-            "Build/Ishiko/Process/Makefiles/$(compiler_short_name)/IshikoProcess.sln"))
+            "Makefiles/$(compiler_short_name)/IshikoProcess.sln"))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/Core",
-            "Build/CodeSmithyIDE/CodeSmithy/Core/Makefiles/$(compiler_short_name)/CodeSmithyCore.sln"))
+            "Makefiles/$(compiler_short_name)/CodeSmithyCore.sln"))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/Make",
-            "Build/CodeSmithyIDE/CodeSmithy/Core/Makefiles/$(compiler_short_name)/CodeSmithyMake.sln"))
+            "Makefiles/$(compiler_short_name)/CodeSmithyMake.sln"))
 
     def download(self):
         package_names = set()
