@@ -4,6 +4,7 @@ import sys
 import subprocess
 import shutil
 from pathlib import Path
+from input import Input
 from output import Output
 from argparser import ArgParser
 from state import State
@@ -11,25 +12,27 @@ from projects import Projects
 from cmake import CMake
 from compilers import Compilers
 
-def try_restore_previous_state(state):
+
+def try_restore_previous_state(input, state):
     if state.previous_state_found:
-        resume = ""
-        while resume != "y" and resume != "n":
-            resume = input(
-                "Previous execution detected. Do you want to resume it? [y/n] ")
+        resume = input.query(
+            "Previous execution detected. Do you want to resume it? [y/n]",
+            ["y", "n"])
         if resume == "n":
             state.reset()
             shutil.rmtree("Build", ignore_errors=True)
 
+
 def download_source_packages(projects, state, output):
     output.print_step_title("Downloading source packages")
-    if state.download_complete == False:
+    if not state.download_complete:
         shutil.rmtree("Downloads", ignore_errors=True)
         projects.download()
     else:
         print("    Using previous execution")
     state.set_download_complete()
     output.next_step()
+
 
 def select_compiler(compilers, state, output):
     print("")
@@ -40,7 +43,7 @@ def select_compiler(compilers, state, output):
         if len(compilers.compilers) == 0:
             print("")
             print("ERROR: No compilers found, exiting")
-            sys.exit(-1);
+            sys.exit(-1)
         selected_compiler_index = (int(input("    Select the compiler to use: ")) - 1)
         compiler = compilers.compilers[selected_compiler_index]
     else:
@@ -49,6 +52,7 @@ def select_compiler(compilers, state, output):
     state.set_selected_compiler(compiler.name)
     output.next_step()
     return compiler
+
 
 def install_cmake(cmake, platform_name, is64bit, state, output):
     # CMake is not easily buildable on Windows so we rely on a binary
@@ -64,15 +68,17 @@ def install_cmake(cmake, platform_name, is64bit, state, output):
     state.set_cmake_path(cmake.path)
     output.next_step()
 
+
 def main():
     print("\nCodeSmithy bootstrap build")
     print("--------------------------\n")
 
+    input = Input()
     output = Output()
     args = ArgParser().parse()
     state = State()
 
-    try_restore_previous_state(state)
+    try_restore_previous_state(input, state)
 
     platform_name = platform.system()
     is64bit = False
