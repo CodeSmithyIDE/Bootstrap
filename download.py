@@ -43,13 +43,10 @@ class Downloader:
     def __init__(self):
         self.downloads = []
         self.downloads.append(Download("Errors", "Ishiko"))
-        self.downloads.append(Download("Process", "Ishiko"))
         self.downloads.append(Download("WindowsRegistry", "Ishiko"))
         self.downloads.append(Download("FileTypes", "Ishiko"))
         self.downloads.append(Download("TestFramework", "Ishiko"))
-        self.downloads.append(Download("libgit2"))
         self.downloads.append(Download("wxWidgets"))
-        self.downloads.append(Download("CodeSmithy", "CodeSmithyIDE"))
 
     def download(self):
         for download, i in zip(self.downloads, range(ord("a"), ord("z"))):

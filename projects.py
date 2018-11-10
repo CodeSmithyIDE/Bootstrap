@@ -1,11 +1,12 @@
 import re
 from download import Downloader
+from download import Download
 
 
 class Project:
     def __init__(self, name, makefile_path):
         self.name = name
-        self.makefile_path = makefile_path
+        self.makefile_path = makefile_path        
 
     def build(self, cmake, compiler, output):
         print("")
@@ -49,6 +50,22 @@ class Projects:
             "Build/CodeSmithyIDE/CodeSmithy/Core/Makefiles/$(compiler_short_name)/CodeSmithyMake.sln"))
 
     def download(self):
+        package_names = set()
+        for project in self.projects:
+            split_name = project.name.split("/")
+            download = None
+            if len(split_name) == 1:
+                package_names.add(split_name[0])
+            else:
+                package_names.add(split_name[0] + "/" + split_name[1])
+        for package_name, i in zip(package_names, range(ord("a"), ord("z"))):
+            download = None
+            split_name = package_name.split("/")
+            if len(split_name) == 1:
+                download = Download(split_name[0])
+            else:
+                download = Download(split_name[1], split_name[0])
+            self.downloader.downloads.append(download)
         self.downloader.download()
 
     def build(self, cmake, compiler, output):
