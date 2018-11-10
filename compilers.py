@@ -8,7 +8,12 @@ class Compiler:
         self.executable = executable
 
     def compile(self, makefile_path):
-        return subprocess.call([self.executable, makefile_path, "/build", "Debug"])
+        try:
+            subprocess.check_call([self.executable, makefile_path,
+                                   "/build", "Debug"])
+        except subprocess.CalledProcessError:
+            raise RuntimeError("Compilation of " + makefile_path + " failed.")
+
 
 class Compilers:
     def __init__(self):

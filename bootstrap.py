@@ -101,7 +101,12 @@ def main():
     os.environ["ISHIKO"] = os.getcwd() + "/Build/Ishiko"
     os.environ["CODESMITHY"] = os.getcwd() + "/Build/CodeSmithyIDE/CodeSmithy"
 
-    projects.build(cmake, compiler, output)
+    try:
+        projects.build(cmake, compiler, output)
+    except RuntimeError as error:
+        print("")
+        print("ERROR:", error)
+        sys.exit(-1)
 
     codeSmithyMakePath = "Build/CodeSmithyIDE/CodeSmithy/Bin/Win32/CodeSmithyMake.exe"
 
