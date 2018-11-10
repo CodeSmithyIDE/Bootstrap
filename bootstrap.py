@@ -42,8 +42,7 @@ def select_compiler(compilers, state, output):
         compilers.show_compiler_list()
         if len(compilers.compilers) == 0:
             print("")
-            print("ERROR: No compilers found, exiting")
-            sys.exit(-1)
+            raise RuntimeError("No compilers found")
         selected_compiler_index = (int(input("    Select the compiler to use: ")) - 1)
         compiler = compilers.compilers[selected_compiler_index]
     else:
@@ -100,14 +99,12 @@ def main():
 
     download_source_packages(projects, state, output)
 
-    compiler = select_compiler(compilers, state, output)
-
-    install_cmake(cmake, platform_name, is64bit, state, output)
-
-    os.environ["ISHIKO"] = os.getcwd() + "/Build/Ishiko"
-    os.environ["CODESMITHY"] = os.getcwd() + "/Build/CodeSmithyIDE/CodeSmithy"
-
     try:
+        os.environ["ISHIKO"] = os.getcwd() + "/Build/Ishiko"
+        os.environ["CODESMITHY"] = os.getcwd() + "/Build/CodeSmithyIDE/CodeSmithy"
+
+        compiler = select_compiler(compilers, state, output)
+        install_cmake(cmake, platform_name, is64bit, state, output)
         projects.build(cmake, compiler, output)
     except RuntimeError as error:
         print("")
