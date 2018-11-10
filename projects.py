@@ -48,8 +48,6 @@ class Projects:
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/Make",
             "Makefiles/$(compiler_short_name)/CodeSmithyMake.sln"))
-
-    def download(self):
         package_names = set()
         for project in self.projects:
             split_name = project.name.split("/")
@@ -66,6 +64,8 @@ class Projects:
             else:
                 download = Download(split_name[1], split_name[0])
             self.downloader.downloads.append(download)
+
+    def download(self):
         self.downloader.download()
 
     def build(self, cmake, compiler, output):
