@@ -73,14 +73,14 @@ def install_cmake(cmake, platform_name, is64bit, state, output):
 
 
 def main():
-    print("\nCodeSmithy bootstrap build")
-    print("--------------------------\n")
-
     input = Input()
     output = Output()
     args = ArgParser().parse()
     state = State()
 
+    print("")
+    output.print_main_title()
+    
     try_restore_previous_state(input, state)
 
     platform_name = platform.system()
