@@ -98,6 +98,7 @@ class Projects:
                 env[project.env_var] = value
         for var_name in env:
             print("    " + var_name + ": " + env[var_name])
+            os.environ[var_name] = env[var_name]
         output.next_step()
 
     def download(self):
