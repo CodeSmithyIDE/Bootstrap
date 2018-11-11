@@ -24,6 +24,7 @@ def try_restore_previous_state(input, state):
 
 
 def download_source_packages(projects, state, output):
+    print("")
     output.print_step_title("Downloading source packages")
     if not state.download_complete:
         shutil.rmtree("Downloads", ignore_errors=True)
@@ -101,12 +102,16 @@ def main():
     compilers = Compilers()
     cmake = CMake()
 
+    try:
+        projects.set_environment_variables(output)
+    except RuntimeError as error:
+        print("")
+        print("ERROR:", error)
+        sys.exit(-1)
+
     download_source_packages(projects, state, output)
 
     try:
-        os.environ["ISHIKO"] = os.getcwd() + "/Build/Ishiko"
-        os.environ["CODESMITHY"] = os.getcwd() + "/Build/CodeSmithyIDE/CodeSmithy"
-
         compiler = select_compiler(compilers, input, state, output)
         install_cmake(cmake, platform_name, is64bit, state, output)
         projects.build(cmake, compiler, input, output)
