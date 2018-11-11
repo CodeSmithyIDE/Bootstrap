@@ -133,4 +133,3 @@ class Projects:
             else:
                 download = Download(split_name[1], split_name[0])
             self.downloader.downloads.append(download)
-
