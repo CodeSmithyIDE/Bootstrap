@@ -25,9 +25,8 @@ class Download:
         Path(self.download_path).parent.mkdir(parents=True, exist_ok=True)
         urllib.request.urlretrieve(self.url, self.download_path)
 
-    def unzip(self, substep):
-        print("    Step 2" + substep + ": Unzipping " + self.download_path,
-              flush=True)
+    def unzip(self):
+        print("    Unzipping " + self.download_path, flush=True)
         shutil.rmtree(self.extract_path_prefix + "/" + self.name,
                       ignore_errors=True)
         shutil.rmtree(self.extract_path_prefix + "/" + self.name + "-master",
@@ -52,6 +51,7 @@ class Downloader:
         for download, i in zip(self.downloads, range(ord("a"), ord("z"))):
             download.download(chr(i))
 
-    def unzip(self):
-        for download, i in zip(self.downloads, range(ord("a"), ord("z"))):
-            download.unzip(chr(i))
+    def unzip(self, name):
+        for download in self.downloads:
+            if download.name == name:
+                download.unzip()

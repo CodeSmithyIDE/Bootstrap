@@ -38,8 +38,6 @@ class Project:
             self.install_dir = split_name[0] + "/" + split_name[1]
 
     def build(self, cmake, compiler, input, output):
-        print("")
-        output.print_step_title("Building " + self.name)
         try:
             if self.makefile_path is None:
                 print("    No build required for this project")
@@ -58,8 +56,6 @@ class Project:
         except RuntimeError:
             print("    Failed to build project")
             raise
-        finally:
-            output.next_step()
 
 
 class Projects:
@@ -112,13 +108,17 @@ class Projects:
         self.downloader.download()
 
     def build(self, cmake, compiler, input, state, output):
-        print("")
-        output.print_step_title("Unzipping source packages")
-        self.downloader.unzip()
-        output.next_step()
         for project in self.projects:
+            print("")
+            output.print_step_title("Building " + project.name)
+            split_name = project.name.split("/")
+            if len(split_name) == 1:
+                self.downloader.unzip(split_name[0])
+            else:
+                self.downloader.unzip(split_name[1])
             project.build(cmake, compiler, input, output)
             state.set_built_project(project.name)
+            output.next_step()
 
     def _init_downloader(self):
         package_names = set()
