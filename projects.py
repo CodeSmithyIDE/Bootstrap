@@ -30,6 +30,13 @@ class Project:
         else:
             self.makefile_path = "Build/" + name + "/" + makefile_path
 
+        # The installation directory is derived from the project name
+        split_name = name.split("/")
+        if len(split_name) == 1:
+            self.install_dir = split_name[0]
+        else:
+            self.install_dir = split_name[0] + "/" + split_name[1]
+
     def build(self, cmake, compiler, input, output):
         print("")
         output.print_step_title("Building " + self.name)
@@ -86,7 +93,7 @@ class Projects:
         output.print_step_title("Setting environment variables")
         env = {}
         for project in self.projects:
-            value = os.getcwd() + "/" + Projects._get_target_dir(project.name)
+            value = os.getcwd() + "/Build/" + project.install_dir
             if project.env_var in env:
                 old_value = env[project.env_var]
                 if (old_value != value):
@@ -116,7 +123,7 @@ class Projects:
         package_names = set()
         for project in self.projects:
             download = None
-            package_names.add(Projects._get_target_dir(project.name))
+            package_names.add(project.install_dir)
         for package_name, i in zip(package_names, range(ord("a"), ord("z"))):
             download = None
             split_name = package_name.split("/")
@@ -126,9 +133,3 @@ class Projects:
                 download = Download(split_name[1], split_name[0])
             self.downloader.downloads.append(download)
 
-    def _get_target_dir(name):
-        split_name = name.split("/")
-        if len(split_name) == 1:
-            return split_name[0]
-        else:
-            return split_name[0] + "/" + split_name[1]
