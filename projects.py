@@ -20,23 +20,29 @@ class Project:
         """
 
         self.name = name
-        self.makefile_path = "Build/" + name + "/" + makefile_path
+        if makefile_path is None:
+            self.makefile_path = None
+        else:
+            self.makefile_path = "Build/" + name + "/" + makefile_path
 
     def build(self, cmake, compiler, input, output):
         print("")
         output.print_step_title("Building " + self.name)
         try:
-            if self.makefile_path.endswith("/CMakeLists.txt"):
+            if self.makefile_path is None:
+                print("    No build required for this project")
+            elif self.makefile_path.endswith("/CMakeLists.txt"):
                 log = self.name + "_build.log"
                 print("    Using CMake, build log: " + log)
                 cmake.compile(self.makefile_path, log)
+                print("    Project build successfully")
             else:
                 print("    Using " + compiler.name)
                 resolved_makefile_path = re.sub(r"\$\(compiler_short_name\)",
                                                 compiler.short_name,
                                                 self.makefile_path)
                 compiler.compile(resolved_makefile_path, input)
-            print("    Project build successfully")
+                print("    Project build successfully")
         except RuntimeError:
             print("    Failed to build project")
             raise
@@ -48,6 +54,9 @@ class Projects:
     def __init__(self):
         self.downloader = Downloader()
         self.projects = []
+        self.projects.append(Project(
+            "pugixml",
+            None))
         self.projects.append(Project(
             "libgit2",
             "CMakeLists.txt"))
