@@ -1,6 +1,7 @@
 import os.path
 import subprocess
 
+
 class Compiler:
     def __init__(self, name, short_name, executable):
         self.name = name
@@ -12,10 +13,21 @@ class Compiler:
             subprocess.check_call([self.executable, makefile_path,
                                    "/build", "Debug"])
         except subprocess.CalledProcessError:
+            raise RuntimeError("Compilation of " + makefile_path + " failed.")
+
+
+class VisualStudio(Compiler):
+    def __init__(self, name, short_name, executable):
+        super().__init__(name, short_name, executable)
+
+    def compile(self, makefile_path, input):
+        try:
+            super().compile(makefile_path, input)
+        except RuntimeError:
             launchIDE = input.query("    Compilation failed. Do you you want to launch the IDE? [y/n]", ["y", "n"])
             if launchIDE == "y":
                 subprocess.Popen([self.executable, makefile_path])
-            raise RuntimeError("Compilation of " + makefile_path + " failed.")
+            raise
 
 
 class Compilers:
@@ -23,10 +35,10 @@ class Compilers:
         self.compilers = []
         foundMSVC14 = os.path.isfile("C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/IDE/devenv.exe")
         if foundMSVC14:
-            self.compilers.append(Compiler("Visual Studio 2015", "VC14", "C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/IDE/devenv.exe"))
+            self.compilers.append(VisualStudio("Visual Studio 2015", "VC14", "C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/IDE/devenv.exe"))
         foundMSVC2017 = os.path.isfile("C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/IDE/devenv.exe")
         if foundMSVC2017:
-            self.compilers.append(Compiler("Visual Studio 2017", "VC15", "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/IDE/devenv.exe"))
+            self.compilers.append(VisualStudio("Visual Studio 2017", "VC15", "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/IDE/devenv.exe"))
 
     def show_compiler_list(self):
         if len(self.compilers) != 0:

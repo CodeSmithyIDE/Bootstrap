@@ -93,7 +93,7 @@ class Projects:
         output.print_step_title("Setting environment variables")
         env = {}
         for project in self.projects:
-            value = os.getcwd() + "/Build/" + project.install_dir
+            value = os.getcwd() + "/Build/" + project.name.split("/")[0]
             if project.env_var in env:
                 old_value = env[project.env_var]
                 if (old_value != value):
