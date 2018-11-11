@@ -1,10 +1,24 @@
+from typing import Optional
 import re
 from download import Downloader
 from download import Download
 
 
 class Project:
-    def __init__(self, name, makefile_path):
+    """Represents a project that can be downloaded and optionally built."""
+
+    def __init__(self, name: str, makefile_path: Optional[str]):
+        """
+        Parameters
+        ----------
+        name : str
+            The name of the project. The location of the package to download is
+            derived from the name.
+        makefile_path : str, optional
+            The path of the makefile used to build the project. None if the
+            project only needs to be downloaded.
+        """
+
         self.name = name
         self.makefile_path = "Build/" + name + "/" + makefile_path
 
