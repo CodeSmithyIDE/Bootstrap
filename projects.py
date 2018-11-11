@@ -111,13 +111,14 @@ class Projects:
     def download(self):
         self.downloader.download()
 
-    def build(self, cmake, compiler, input, output):
+    def build(self, cmake, compiler, input, state, output):
         print("")
         output.print_step_title("Unzipping source packages")
         self.downloader.unzip()
         output.next_step()
         for project in self.projects:
             project.build(cmake, compiler, input, output)
+            state.set_built_project(project.name)
 
     def _init_downloader(self):
         package_names = set()
