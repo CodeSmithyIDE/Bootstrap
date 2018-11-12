@@ -100,6 +100,7 @@ def main():
 
     try:
         dependencies = Dependencies()
+        dependencies.check()
         
         projects = Projects()
         
