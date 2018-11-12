@@ -36,6 +36,7 @@ class Project:
             self.install_dir = split_name[0]
         else:
             self.install_dir = split_name[0] + "/" + split_name[1]
+        self.built = False
 
     def build(self, cmake, compiler, input, output):
         try:
@@ -53,6 +54,7 @@ class Project:
                                                 self.makefile_path)
                 compiler.compile(resolved_makefile_path, input)
                 print("    Project build successfully")
+            self.built = True
         except RuntimeError:
             print("    Failed to build project")
             raise
@@ -108,15 +110,24 @@ class Projects:
         self.downloader.download()
 
     def build(self, cmake, compiler, input, state, output):
+        # for now only bypass pugixml and libgit2 as more complex logic
+        # is required to handle the other projects
+        for project in self.projects:
+            if project.name == "libgit2" or project.name == "pugixml":
+                if project.name in state.built_projects:
+                    project.built = True
         for project in self.projects:
             print("")
             output.print_step_title("Building " + project.name)
-            split_name = project.name.split("/")
-            if len(split_name) == 1:
-                self.downloader.unzip(split_name[0])
+            if project.built:
+                print("    Using previous execution")
             else:
-                self.downloader.unzip(split_name[1])
-            project.build(cmake, compiler, input, output)
+                split_name = project.name.split("/")
+                if len(split_name) == 1:
+                    self.downloader.unzip(split_name[0])
+                else:
+                    self.downloader.unzip(split_name[1])
+                project.build(cmake, compiler, input, output)
             state.set_built_project(project.name)
             output.next_step()
 
