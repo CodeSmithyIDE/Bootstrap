@@ -7,6 +7,7 @@ from input import Input
 from output import Output
 from argparser import ArgParser
 from state import State
+from dependencies import Dependencies
 from projects import Projects
 from cmake import CMake
 from compilers import Compilers
@@ -97,11 +98,11 @@ def main():
 
     Path("Build").mkdir(exist_ok=True)
 
-    projects = Projects()
-    compilers = Compilers()
-    cmake = CMake()
-
     try:
+        dependencies = Dependencies()
+        
+        projects = Projects()
+        
         projects.set_environment_variables(output)
     except RuntimeError as error:
         print("")
@@ -111,8 +112,12 @@ def main():
     download_source_packages(projects, state, output)
 
     try:
+        compilers = Compilers()
         compiler = select_compiler(compilers, input, state, output)
+
+        cmake = CMake()
         install_cmake(cmake, platform_name, is64bit, state, output)
+        
         projects.build(cmake, compiler, input, state, output)
     except RuntimeError as error:
         print("")
