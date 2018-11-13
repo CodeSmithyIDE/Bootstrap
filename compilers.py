@@ -3,10 +3,11 @@ import subprocess
 
 
 class Compiler:
-    def __init__(self, name, short_name, executable):
+    def __init__(self, name, short_name, executable, cmake_generator):
         self.name = name
         self.short_name = short_name
         self.executable = executable
+        self.cmake_generator = cmake_generator
 
     def compile(self, makefile_path, input):
         try:
@@ -18,7 +19,12 @@ class Compiler:
 
 class VisualStudio(Compiler):
     def __init__(self, name, short_name, executable):
-        super().__init__(name, short_name, executable)
+        cmake_generator = ""
+        if short_name == "VC14":
+            cmake_generator = "Visual Studio 14 2015"
+        elif short_name == "VC15":
+            cmake_generator = "Visual Studio 15 2017"
+        super().__init__(name, short_name, executable, cmake_generator)
 
     def compile(self, makefile_path, input):
         try:

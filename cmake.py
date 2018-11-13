@@ -5,8 +5,8 @@ import shutil
 from pathlib import Path
 
 class CMake:
-    def __init__self(self):
-        pass
+    def __init__(self, generator):
+        self.generator = generator
 
     def install(self, platform_name, is64bit):
         self.path = ""
@@ -27,7 +27,7 @@ class CMake:
         rc = 0
         with open(logfile, "w") as output_file:
             rc = subprocess.call(
-                [previous_working_dir + "/" + self.path, "."],
+                [previous_working_dir + "/" + self.path, "-G", self.generator, "."],
                 stdout=output_file)
             if rc == 0:
                 rc = subprocess.call(

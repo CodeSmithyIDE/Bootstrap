@@ -116,7 +116,7 @@ def main():
         compilers = Compilers()
         compiler = select_compiler(compilers, input, state, output)
 
-        cmake = CMake()
+        cmake = CMake(compiler.cmake_generator)
         install_cmake(cmake, platform_name, is64bit, state, output)
         
         projects.build(cmake, compiler, input, state, output)
