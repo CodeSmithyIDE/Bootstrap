@@ -8,7 +8,11 @@ from download import Download
 class Project:
     """Represents a project that can be downloaded and optionally built."""
 
-    def __init__(self, name: str, env_var: str, makefile_path: Optional[str]):
+    def __init__(self,
+                 name: str,
+                 env_var: str,
+                 makefile_path: Optional[str],
+                 use_codesmithy_make):
         """
         Parameters
         ----------
@@ -29,6 +33,7 @@ class Project:
             self.makefile_path = None
         else:
             self.makefile_path = "Build/" + name + "/" + makefile_path
+        self.use_codesmithy_make = use_codesmithy_make
 
         split_name = name.split("/")
 
@@ -48,10 +53,17 @@ class Project:
 
         self.built = False
 
-    def build(self, cmake, compiler, input, output):
+    def build(self, cmake, compiler, codesmithymake, input, output):
         try:
             if self.makefile_path is None:
                 print("    No build required for this project")
+            elif self.use_codesmithy_make:
+                print("    Using CodeSmithyMake")
+                resolved_makefile_path = re.sub(r"\$\(compiler_short_name\)",
+                                                compiler.short_name,
+                                                self.makefile_path)
+                codesmithymake.build(resolved_makefile_path)
+                print("    Project build successfully")
             elif self.makefile_path.endswith("/CMakeLists.txt"):
                 log = self.name + "_build.log"
                 print("    Using CMake, build log: " + log)
@@ -77,35 +89,43 @@ class Projects:
         self.projects.append(Project(
             "pugixml",
             "PUGIXML",
-            None))
+            None,
+            False))
         self.projects.append(Project(
             "libgit2",
             "LIBGIT2",
-            "CMakeLists.txt"))
+            "CMakeLists.txt",
+            False))
         self.projects.append(Project(
             "Ishiko/Process",
             "ISHIKO",
-            "Makefiles/$(compiler_short_name)/IshikoProcess.sln"))
+            "Makefiles/$(compiler_short_name)/IshikoProcess.sln",
+            False))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/Core",
             "CODESMITHY",
-            "Makefiles/$(compiler_short_name)/CodeSmithyCore.sln"))
+            "Makefiles/$(compiler_short_name)/CodeSmithyCore.sln",
+            False))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/Make",
             "CODESMITHY",
-            "Makefiles/$(compiler_short_name)/CodeSmithyMake.sln"))
+            "Makefiles/$(compiler_short_name)/CodeSmithyMake.sln",
+            False))
         self.projects.append(Project(
             "Ishiko/Errors",
             "ISHIKO",
-            "Makefiles/$(compiler_short_name)/IshikoErrors.sln"))
+            "Makefiles/$(compiler_short_name)/IshikoErrors.sln",
+            True))
         self.projects.append(Project(
             "Ishiko/TestFramework/Core",
             "ISHIKO",
-            "Makefiles/$(compiler_short_name)/IshikoTestFrameworkCore.sln"))  
+            "Makefiles/$(compiler_short_name)/IshikoTestFrameworkCore.sln",
+            True))
         self.projects.append(Project(
             "Ishiko/WindowsRegistry",
             "ISHIKO",
-            "IshikoWindowsRegistry"))
+            "IshikoWindowsRegistry",
+            True))
         self._init_downloader()
 
     def set_environment_variables(self, output):
@@ -131,7 +151,7 @@ class Projects:
     def download(self):
         self.downloader.download()
 
-    def build(self, cmake, compiler, input, state, output):
+    def build(self, cmake, compiler, codesmithymake, input, state, output):
         # for now only bypass pugixml and libgit2 as more complex logic
         # is required to handle the other projects
         for project in self.projects:
@@ -149,7 +169,7 @@ class Projects:
                     self.downloader.unzip(split_name[0])
                 else:
                     self.downloader.unzip(split_name[1])
-                project.build(cmake, compiler, input, output)
+                project.build(cmake, compiler, codesmithymake, input, output)
             state.set_built_project(project.name)
             output.next_step()
 

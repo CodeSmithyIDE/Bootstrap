@@ -11,6 +11,7 @@ from dependencies import Dependencies
 from projects import Projects
 from cmake import CMake
 from compilers import Compilers
+from codesmithymake import CodeSmithyMake
 
 
 def try_restore_previous_state(input, state):
@@ -120,8 +121,10 @@ def main():
 
         cmake = CMake(compiler.cmake_generator)
         install_cmake(cmake, platform_name, is64bit, state, output)
+
+        codesmithymake = CodeSmithyMake()
         
-        projects.build(cmake, compiler, input, state, output)
+        projects.build(cmake, compiler, codesmithymake, input, state, output)
     except RuntimeError as error:
         print("")
         print("ERROR:", error)
