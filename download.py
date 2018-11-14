@@ -6,10 +6,9 @@ import zipfile
 
 
 class Download:
-    def __init__(self, name, subdir=""):
+    def __init__(self, name, url, subdir=""):
         self.name = name
-        self.url = "https://github.com/CodeSmithyIDE/" + \
-                   name + "/archive/master.zip"
+        self.url = url
         if subdir == "":
             self.download_path = "Downloads/" + self.name + "-master.zip"
             self.extract_path_prefix = "Build"
@@ -47,11 +46,11 @@ class Download:
 class Downloader:
     def __init__(self):
         self.downloads = []
-        self.downloads.append(Download("Errors", "Ishiko"))
-        self.downloads.append(Download("WindowsRegistry", "Ishiko"))
-        self.downloads.append(Download("FileTypes", "Ishiko"))
-        self.downloads.append(Download("TestFramework", "Ishiko"))
-        self.downloads.append(Download("wxWidgets"))
+      #  self.downloads.append(Download("Errors", "TODO", "Ishiko"))
+      #  self.downloads.append(Download("WindowsRegistry", "TODO", "Ishiko"))
+      #  self.downloads.append(Download("FileTypes", "TODO", "Ishiko"))
+      #  self.downloads.append(Download("TestFramework", "TODO", "Ishiko"))
+      #  self.downloads.append(Download("wxWidgets", "TODO"))
 
     def download(self):
         for download, i in zip(self.downloads, range(ord("a"), ord("z"))):

@@ -30,12 +30,22 @@ class Project:
         else:
             self.makefile_path = "Build/" + name + "/" + makefile_path
 
-        # The installation directory is derived from the project name
         split_name = name.split("/")
+
+        # The download URL is derived from the project name
+        if len(split_name) == 1:
+            self.download_url = "https://github.com/CodeSmithyIDE/" + \
+                                split_name[0] + "/archive/master.zip"
+        else:
+            self.download_url = "https://github.com/CodeSmithyIDE/" + \
+                                split_name[1] + "/archive/master.zip"
+
+        # The installation directory is derived from the project name
         if len(split_name) == 1:
             self.install_dir = split_name[0]
         else:
             self.install_dir = split_name[0] + "/" + split_name[1]
+
         self.built = False
 
     def build(self, cmake, compiler, input, output):
@@ -132,15 +142,14 @@ class Projects:
             output.next_step()
 
     def _init_downloader(self):
-        package_names = set()
+        download_urls = {}
         for project in self.projects:
+            download_urls[project.download_url] = project
+        for download_url, project in download_urls.items():
             download = None
-            package_names.add(project.install_dir)
-        for package_name, i in zip(package_names, range(ord("a"), ord("z"))):
-            download = None
-            split_name = package_name.split("/")
+            split_name = project.name.split("/")
             if len(split_name) == 1:
-                download = Download(split_name[0])
+                download = Download(split_name[0], download_url)
             else:
-                download = Download(split_name[1], split_name[0])
+                download = Download(split_name[1], download_url, split_name[0])
             self.downloader.downloads.append(download)
