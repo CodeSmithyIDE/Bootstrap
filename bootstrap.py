@@ -23,10 +23,12 @@ def try_restore_previous_state(input, state):
             shutil.rmtree("Build", ignore_errors=True)
 
 
-def download_source_packages(projects, state, output):
+def download_source_packages(projects, skip, state, output):
     print("")
     output.print_step_title("Downloading source packages")
-    if not state.download_complete:
+    if skip:
+        print("    Skipping downloads")
+    elif not state.download_complete:
         shutil.rmtree("Downloads", ignore_errors=True)
         projects.download()
     else:
@@ -110,7 +112,7 @@ def main():
         print("ERROR:", error)
         sys.exit(-1)
 
-    download_source_packages(projects, state, output)
+    download_source_packages(projects, args.skip_downloads, state, output)
 
     try:
         compilers = Compilers()
@@ -140,18 +142,6 @@ def buildWithCodeSmithyMake(name, makefile):
         sys.exit(-1)
     return
 
-
-print("Step 9: Building Errors", flush=True)
-buildWithCodeSmithyMake("Errors", "Build/Ishiko/Errors/Makefiles/VC14/IshikoErrors.sln")
-print("")
-
-print("Step 10: Building TestFrameworkCore", flush=True)
-buildWithCodeSmithyMake("TestFrameworkCore", "Build/Ishiko/TestFramework/Core/Makefiles/VC14/IshikoTestFrameworkCore.sln")
-print("")
-
-print("Step 11: Building WindowsRegistry", flush=True)
-buildWithCodeSmithyMake("WindowsRegistry", "Build/Ishiko/WindowsRegistry/Makefiles/VC14/IshikoWindowsRegistry.sln")
-print("")
 
 print("Step 12: Building FileTypes", flush=True)
 buildWithCodeSmithyMake("FileTypes", "Build/Ishiko/FileTypes/Makefiles/VC14/IshikoFileTypes.sln")

@@ -46,10 +46,7 @@ class Download:
 class Downloader:
     def __init__(self):
         self.downloads = []
-      #  self.downloads.append(Download("Errors", "TODO", "Ishiko"))
-      #  self.downloads.append(Download("WindowsRegistry", "TODO", "Ishiko"))
       #  self.downloads.append(Download("FileTypes", "TODO", "Ishiko"))
-      #  self.downloads.append(Download("TestFramework", "TODO", "Ishiko"))
       #  self.downloads.append(Download("wxWidgets", "TODO"))
 
     def download(self):

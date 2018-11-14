@@ -94,6 +94,18 @@ class Projects:
             "CodeSmithyIDE/CodeSmithy/Make",
             "CODESMITHY",
             "Makefiles/$(compiler_short_name)/CodeSmithyMake.sln"))
+        self.projects.append(Project(
+            "Ishiko/Errors",
+            "ISHIKO",
+            "Makefiles/$(compiler_short_name)/IshikoErrors.sln"))
+        self.projects.append(Project(
+            "Ishiko/TestFramework/Core",
+            "ISHIKO",
+            "Makefiles/$(compiler_short_name)/IshikoTestFrameworkCore.sln"))  
+        self.projects.append(Project(
+            "Ishiko/WindowsRegistry",
+            "ISHIKO",
+            "IshikoWindowsRegistry"))
         self._init_downloader()
 
     def set_environment_variables(self, output):
