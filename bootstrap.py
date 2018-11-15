@@ -76,7 +76,7 @@ def install_cmake(cmake, platform_name, is64bit, state, output):
     output.next_step()
 
 
-def main_build():
+def main_bootstrap_build():
     input = Input()
     output = Output()
     args = ArgParser().parse()
@@ -138,7 +138,7 @@ def main_build():
 
 
 def main():
-    main_build()
+    main_bootstrap_build()
 
 
 main()
