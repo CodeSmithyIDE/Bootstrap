@@ -62,7 +62,7 @@ class Project:
                 resolved_makefile_path = re.sub(r"\$\(compiler_short_name\)",
                                                 compiler.short_name,
                                                 self.makefile_path)
-                codesmithymake.build(resolved_makefile_path)
+                codesmithymake.build(compiler, resolved_makefile_path, input)
                 print("    Project build successfully")
             elif self.makefile_path.endswith("/CMakeLists.txt"):
                 log = self.name + "_build.log"
@@ -80,6 +80,12 @@ class Project:
         except RuntimeError:
             print("    Failed to build project")
             raise
+
+    def launch(self, compiler):
+        resolved_makefile_path = re.sub(r"\$\(compiler_short_name\)",
+                                                compiler.short_name,
+                                                self.makefile_path)
+        compiler.launch(resolved_makefile_path)
 
 
 class Projects:
@@ -127,6 +133,12 @@ class Projects:
             "IshikoWindowsRegistry",
             True))
         self._init_downloader()
+
+    def get(self, name):
+        for project in self.projects:
+            if project.name == name:
+                return project
+        return None
 
     def set_environment_variables(self, output):
         print("")
