@@ -61,20 +61,20 @@ class Project:
                 print("    Using CodeSmithyMake")
                 resolved_makefile_path = re.sub(r"\$\(compiler_short_name\)",
                                                 compiler.short_name,
-                                                self.makefile_path)
-                codesmithymake.build(compiler, resolved_makefile_path, input)
-                print("    Project build successfully")
-            elif self.makefile_path.endswith("/CMakeLists.txt"):
-                log = self.name + "_build.log"
-                print("    Using CMake, build log: " + log)
-                cmake.compile(self.makefile_path, log)
-                print("    Project build successfully")
             else:
-                print("    Using " + compiler.name)
-                resolved_makefile_path = re.sub(r"\$\(compiler_short_name\)",
-                                                compiler.short_name,
-                                                self.makefile_path)
-                compiler.compile(resolved_makefile_path, input)
+                resolved_makefile_path = self._resolve_makefile_path(compiler)
+                if not os.path.exists(resolved_makefile_path):
+                    raise RuntimeError(resolved_makefile_path + " not found")
+                if self.use_codesmithy_make:
+                    print("    Using CodeSmithyMake")
+                    codesmithymake.build(compiler, resolved_makefile_path, input)
+                elif self.makefile_path.endswith("/CMakeLists.txt"):
+                    log = self.name + "_build.log"
+                    print("    Using CMake, build log: " + log)
+                    cmake.compile(resolved_makefile_path, log)
+                else:
+                    print("    Using " + compiler.name)
+                    compiler.compile(resolved_makefile_path, input)
                 print("    Project build successfully")
             self.built = True
         except RuntimeError:
@@ -82,10 +82,12 @@ class Project:
             raise
 
     def launch(self, compiler):
-        resolved_makefile_path = re.sub(r"\$\(compiler_short_name\)",
-                                                compiler.short_name,
-                                                self.makefile_path)
-        compiler.launch(resolved_makefile_path)
+        compiler.launch(self._resolve_makefile_path(compiler))
+
+    def _resolve_makefile_path(self, compiler):
+        return re.sub(r"\$\(compiler_short_name\)",
+                      compiler.short_name,
+                      self.makefile_path)
 
 
 class Projects:
