@@ -57,10 +57,6 @@ class Project:
         try:
             if self.makefile_path is None:
                 print("    No build required for this project")
-            elif self.use_codesmithy_make:
-                print("    Using CodeSmithyMake")
-                resolved_makefile_path = re.sub(r"\$\(compiler_short_name\)",
-                                                compiler.short_name,
             else:
                 resolved_makefile_path = self._resolve_makefile_path(compiler)
                 if not os.path.exists(resolved_makefile_path):
