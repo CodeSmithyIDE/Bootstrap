@@ -76,12 +76,7 @@ def install_cmake(cmake, platform_name, is64bit, state, output):
     output.next_step()
 
 
-def main_bootstrap_build():
-    input = Input()
-    output = Output()
-    args = ArgParser().parse()
-    state = State()
-
+def main_bootstrap_build(args, input, state, output):
     print("")
     output.print_main_title()
     
@@ -123,10 +118,6 @@ def main_bootstrap_build():
         install_cmake(cmake, platform_name, is64bit, state, output)
 
         codesmithymake = CodeSmithyMake()
-
-        if args.launch is not None:
-            projects.get(args.launch).launch(compiler)
-            return
         
         projects.build(cmake, compiler, codesmithymake, input, state, output)
     except RuntimeError as error:
@@ -137,8 +128,30 @@ def main_bootstrap_build():
     codeSmithyMakePath = "Build/CodeSmithyIDE/CodeSmithy/Bin/Win32/CodeSmithyMake.exe"
 
 
+def main_launch_project(args, input, state, output):
+    projects = Projects()
+
+    compilers = Compilers()
+    compiler = select_compiler(compilers, input, state, output)
+
+    projects.get(args.launch).launch(compiler)
+
 def main():
-    main_bootstrap_build()
+    args = ArgParser().parse()
+
+    input = Input()
+    output = Output()
+    state = State()
+    
+    if args.launch is None:
+        main_bootstrap_build(args, input, state, output)
+    else:
+        try:
+            main_launch_project(args, input, state, output)
+        except RuntimeError as error:
+            print("")
+            print("ERROR:", error)
+            sys.exit(-1)
 
 
 main()

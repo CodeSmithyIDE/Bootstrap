@@ -32,8 +32,11 @@ class VisualStudio(Compiler):
         except RuntimeError:
             launchIDE = input.query("    Compilation failed. Do you you want to launch the IDE? [y/n]", ["y", "n"])
             if launchIDE == "y":
-                subprocess.Popen([self.executable, makefile_path])
+                self.launch(makefile_path)
             raise
+
+    def launch(self, makefile_path):
+        subprocess.Popen([self.executable, makefile_path])
 
 
 class Compilers:
