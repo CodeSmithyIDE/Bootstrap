@@ -7,6 +7,7 @@ class State:
         try:
             with open('state.json', 'r') as file:
                 state = json.loads(file.read())
+                self.architecture = state["architecture"]
                 self.download_complete = state["download_complete"]
                 self.selected_compiler = state["selected_compiler"]
                 self.cmake_path = state["cmake_path"]
@@ -42,7 +43,8 @@ class State:
             built_projects_list = []
             for project in self.built_projects:
                 built_projects_list.append(project)
-            state = {"download_complete": self.download_complete,
+            state = {"architecture": self.architecture,
+                     "download_complete": self.download_complete,
                      "selected_compiler": self.selected_compiler,
                      "cmake_path": self.cmake_path,
                      "built_projects": built_projects_list}
@@ -50,6 +52,7 @@ class State:
 
     def reset_variables(self):
         self.previous_state_found = False
+        self.architecture = ""
         self.download_complete = False
         self.selected_compiler = ""
         self.cmake_path = ""
