@@ -76,7 +76,7 @@ def install_cmake(cmake, platform_name, is64bit, state, output):
     output.next_step()
 
 
-def main():
+def main_build():
     input = Input()
     output = Output()
     args = ArgParser().parse()
@@ -106,7 +106,7 @@ def main():
         dependencies.check(output)
         
         projects = Projects()
-        
+
         projects.set_environment_variables(output)
     except RuntimeError as error:
         print("")
@@ -118,11 +118,15 @@ def main():
     try:
         compilers = Compilers()
         compiler = select_compiler(compilers, input, state, output)
-
+        
         cmake = CMake(compiler.cmake_generator)
         install_cmake(cmake, platform_name, is64bit, state, output)
 
         codesmithymake = CodeSmithyMake()
+
+        if args.launch is not None:
+            projects.get(args.launch).launch(compiler)
+            return
         
         projects.build(cmake, compiler, codesmithymake, input, state, output)
     except RuntimeError as error:
@@ -131,6 +135,10 @@ def main():
         sys.exit(-1)
 
     codeSmithyMakePath = "Build/CodeSmithyIDE/CodeSmithy/Bin/Win32/CodeSmithyMake.exe"
+
+
+def main():
+    main_build()
 
 
 main()
