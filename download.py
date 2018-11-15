@@ -46,8 +46,6 @@ class Download:
 class Downloader:
     def __init__(self):
         self.downloads = []
-      #  self.downloads.append(Download("FileTypes", "TODO", "Ishiko"))
-      #  self.downloads.append(Download("wxWidgets", "TODO"))
 
     def download(self):
         for download, i in zip(self.downloads, range(ord("a"), ord("z"))):

@@ -132,6 +132,42 @@ class Projects:
             "ISHIKO",
             "IshikoWindowsRegistry",
             True))
+        self.projects.append(Project(
+            "Ishiko/FileTypes",
+            "ISHIKO",
+            "IshikoFileTypes",
+            True))
+        self.projects.append(Project(
+            "CodeSmithyIDE/CodeSmithy/UICore",
+            "CODESMITHY",
+            "CodeSmithyUICore",
+            True))
+        self.projects.append(Project(
+            "CodeSmithyIDE/CodeSmithy/UIElements",
+            "CODESMITHY",
+            "CodeSmithyUIElements",
+            True))
+        self.projects.append(Project(
+            "CodeSmithyIDE/CodeSmithy/UIImplementation",
+            "CODESMITHY",
+            "CodeSmithyUIImplementation",
+            True))
+        self.projects.append(Project(
+            "CodeSmithyIDE/CodeSmithy/UI",
+            "CODESMITHY",
+            "CodeSmithy",
+            True))
+        self.projects.append(Project(
+            "CodeSmithyIDE/CodeSmithy/Tests/Core",
+            "CODESMITHY",
+            "CodeSmithyCoreTests",
+            True))
+        self.projects.append(Project(
+            "CodeSmithyIDE/CodeSmithy/Tests/Make",
+            "CODESMITHY",
+            "CodeSmithyMakeTests",
+            True))
+      #  self.downloads.append(Download("wxWidgets", "TODO"))      
         self._init_downloader()
 
     def get(self, name):
