@@ -37,13 +37,16 @@ class Project:
 
         split_name = name.split("/")
 
-        # The download URL is derived from the project name
+        # The download URL is derived from the project name but we have
+        # a list of download URLs in case derived classes want to download
+        # more than one package
+        self.download_urls = []
         if len(split_name) == 1:
-            self.download_url = "https://github.com/CodeSmithyIDE/" + \
-                                split_name[0] + "/archive/master.zip"
+            self.download_urls.append("https://github.com/CodeSmithyIDE/" +
+                                split_name[0] + "/archive/master.zip")
         else:
-            self.download_url = "https://github.com/CodeSmithyIDE/" + \
-                                split_name[1] + "/archive/master.zip"
+            self.download_urls.append("https://github.com/CodeSmithyIDE/" +
+                                split_name[1] + "/archive/master.zip")
 
         # The installation directory is derived from the project name
         if len(split_name) == 1:
@@ -233,7 +236,8 @@ class Projects:
     def _init_downloader(self):
         download_urls = {}
         for project in self.projects:
-            download_urls[project.download_url] = project
+            for download_url in project.download_urls:
+                download_urls[download_url] = project
         for download_url, project in download_urls.items():
             download = None
             split_name = project.name.split("/")
