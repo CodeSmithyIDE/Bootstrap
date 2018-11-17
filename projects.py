@@ -23,8 +23,9 @@ class Project:
             The name of the environment variable that will point to the
             location of this project. The location is derived from the name.
         makefile_path : str, optional
-            The path of the makefile used to build the project. None if the
-            project only needs to be downloaded.
+            The path of the makefile used to build the project. The path is
+            relative to the directory where the project is unzipped. None if
+            the project only needs to be downloaded.
         """
 
         self.name = name
@@ -106,21 +107,48 @@ class Project:
 
 class wxWidgetsProject(Project):
     def __init__(self):
-        super().__init__("wxWidgets", "WXWIN", None, False)
+        super().__init__("wxWidgets", "WXWIN",
+                         "build/msw/wx_vc15.sln", False)
 
     def create_downloader(self):
         downloader = super().create_downloader()
         downloader.downloads.append(
             Download("zlib",
                      "https://github.com/CodeSmithyIDE/zlib/archive/wx.zip",
-                     None,
-                     "wx",
-                     "Build/wxWidgets/src"))
+                     None, "wx", "Build/wxWidgets/src"))
+        downloader.downloads.append(
+            Download("libpng",
+                     "https://github.com/CodeSmithyIDE/libpng/archive/wx.zip",
+                     None, "wx", "Build/wxWidgets/src"))
+        downloader.downloads.append(
+            Download("libexpat",
+                     "https://github.com/CodeSmithyIDE/libexpat/archive/wx.zip",
+                     None, "wx", "Build/wxWidgets/src"))
+        downloader.downloads.append(
+            Download("libjpeg-turbo",
+                     "https://github.com/CodeSmithyIDE/libjpeg-turbo/archive/wx.zip",
+                     None, "wx", "Build/wxWidgets/src"))
+        downloader.downloads.append(
+            Download("libtiff",
+                     "https://github.com/CodeSmithyIDE/libtiff/archive/wx.zip",
+                     None, "wx", "Build/wxWidgets/src"))
         return downloader
 
     def unzip(self, downloader):
         super().unzip(downloader)
         downloader.unzip("zlib")
+        downloader.unzip("libpng")
+        os.rmdir("Build/wxWidgets/src/png")
+        os.rename("Build/wxWidgets/src/libpng", "Build/wxWidgets/src/png")
+        downloader.unzip("libexpat")
+        os.rmdir("Build/wxWidgets/src/expat")
+        os.rename("Build/wxWidgets/src/libexpat", "Build/wxWidgets/src/expat")
+        downloader.unzip("libjpeg-turbo")
+        os.rmdir("Build/wxWidgets/src/jpeg")
+        os.rename("Build/wxWidgets/src/libjpeg-turbo", "Build/wxWidgets/src/jpeg")
+        downloader.unzip("libtiff")
+        os.rmdir("Build/wxWidgets/src/tiff")
+        os.rename("Build/wxWidgets/src/libtiff", "Build/wxWidgets/src/tiff")
 
 
 class Projects:
