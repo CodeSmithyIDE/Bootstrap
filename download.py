@@ -47,6 +47,16 @@ class Downloader:
     def __init__(self):
         self.downloads = []
 
+    def merge(self, other_downloader):
+        for other_download in other_downloader.downloads:
+            already_present = False
+            for download in self.downloads:
+                if download.url == other_download.url:
+                    already_present = True
+                    break
+            if not already_present:
+                self.downloads.append(other_download)
+
     def download(self):
         for download, i in zip(self.downloads, range(ord("a"), ord("z"))):
             download.download(chr(i))

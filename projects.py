@@ -37,16 +37,19 @@ class Project:
 
         split_name = name.split("/")
 
-        # The download URL is derived from the project name but we have
-        # a list of download URLs in case derived classes want to download
-        # more than one package
-        self.download_urls = []
+        self.downloader = Downloader()
+
+        # The download URL is derived from the project name
+        download = None
         if len(split_name) == 1:
-            self.download_urls.append("https://github.com/CodeSmithyIDE/" +
-                                split_name[0] + "/archive/master.zip")
+            download_url = "https://github.com/CodeSmithyIDE/" + \
+                           split_name[0] + "/archive/master.zip"
+            download = Download(split_name[0], download_url)
         else:
-            self.download_urls.append("https://github.com/CodeSmithyIDE/" +
-                                split_name[1] + "/archive/master.zip")
+            download_url = "https://github.com/CodeSmithyIDE/" + \
+                           split_name[1] + "/archive/master.zip"
+            download = Download(split_name[1], download_url, split_name[0])
+        self.downloader.downloads.append(download)
 
         # The installation directory is derived from the project name
         if len(split_name) == 1:
@@ -234,15 +237,5 @@ class Projects:
             output.next_step()
 
     def _init_downloader(self):
-        download_urls = {}
         for project in self.projects:
-            for download_url in project.download_urls:
-                download_urls[download_url] = project
-        for download_url, project in download_urls.items():
-            download = None
-            split_name = project.name.split("/")
-            if len(split_name) == 1:
-                download = Download(split_name[0], download_url)
-            else:
-                download = Download(split_name[1], download_url, split_name[0])
-            self.downloader.downloads.append(download)
+            self.downloader.merge(project.downloader)
