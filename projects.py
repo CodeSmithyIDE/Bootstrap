@@ -108,7 +108,7 @@ class Project:
 class wxWidgetsProject(Project):
     def __init__(self):
         super().__init__("wxWidgets", "WXWIN",
-                         "build/msw/wx_vc15.sln", False)
+                         "build/msw/wx_$(compiler_short_name).sln", False)
 
     def create_downloader(self):
         downloader = super().create_downloader()
@@ -149,6 +149,11 @@ class wxWidgetsProject(Project):
         downloader.unzip("libtiff")
         os.rmdir("Build/wxWidgets/src/tiff")
         os.rename("Build/wxWidgets/src/libtiff", "Build/wxWidgets/src/tiff")
+
+    def _resolve_makefile_path(self, compiler):
+        return re.sub(r"\$\(compiler_short_name\)",
+                      compiler.short_name.lower(),
+                      self.makefile_path)
 
 
 class Projects:
