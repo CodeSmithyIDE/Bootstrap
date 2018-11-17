@@ -63,7 +63,8 @@ class Project:
                     raise RuntimeError(resolved_makefile_path + " not found")
                 if self.use_codesmithy_make:
                     print("    Using CodeSmithyMake")
-                    codesmithymake.build(compiler, resolved_makefile_path, input)
+                    codesmithymake.build(compiler, resolved_makefile_path,
+                                         input)
                 elif self.makefile_path.endswith("/CMakeLists.txt"):
                     log = self.name + "_build.log"
                     print("    Using CMake, build log: " + log)
@@ -87,7 +88,9 @@ class Project:
 
 
 class wxWidgetsProject(Project):
-    pass
+    def __init__(self):
+        super().__init__("wxWidgets", "WXWIN", None, False)
+
 
 class Projects:
     def __init__(self):
@@ -143,11 +146,7 @@ class Projects:
             "CODESMITHY",
             "Makefiles/$(compiler_short_name)/CodeSmithyUICore.sln",
             True))
-        self.projects.append(Project(
-            "wxWidgets",
-            "WXWIN",
-            "build/msw/wx_vc15.sln",
-            False))
+        self.projects.append(wxWidgetsProject())
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/UIElements",
             "CODESMITHY",
