@@ -42,6 +42,14 @@ class Download:
                   flush=True)
         self.unzipped = True
 
+    def __eq__(self, other):
+        if not isinstance(other, Download):
+            return False
+        return ((self.name == other.name) and (self.url == other.url) and
+                (self.download_path == other.download_path) and
+                (self.extract_path_prefix == other.extract_path_prefix) and
+                (self.unzipped == other.unzipped))
+
 
 class Downloader:
     def __init__(self):
@@ -52,6 +60,10 @@ class Downloader:
             already_present = False
             for download in self.downloads:
                 if download.url == other_download.url:
+                    if download != other_download:
+                        exception_text = "Conflicting values for " + \
+                                         "download " + download.name
+                        raise RuntimeError(exception_text)
                     already_present = True
                     break
             if not already_present:

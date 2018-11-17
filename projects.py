@@ -37,19 +37,7 @@ class Project:
 
         split_name = name.split("/")
 
-        self.downloader = Downloader()
-
-        # The download URL is derived from the project name
-        download = None
-        if len(split_name) == 1:
-            download_url = "https://github.com/CodeSmithyIDE/" + \
-                           split_name[0] + "/archive/master.zip"
-            download = Download(split_name[0], download_url)
-        else:
-            download_url = "https://github.com/CodeSmithyIDE/" + \
-                           split_name[1] + "/archive/master.zip"
-            download = Download(split_name[1], download_url, split_name[0])
-        self.downloader.downloads.append(download)
+        self._init_downloader(split_name)
 
         # The installation directory is derived from the project name
         if len(split_name) == 1:
@@ -86,6 +74,21 @@ class Project:
 
     def launch(self, compiler):
         compiler.launch(self._resolve_makefile_path(compiler))
+
+    def _init_downloader(self, split_name):
+        self.downloader = Downloader()
+
+        # The download URL is derived from the project name
+        download = None
+        if len(split_name) == 1:
+            download_url = "https://github.com/CodeSmithyIDE/" + \
+                           split_name[0] + "/archive/master.zip"
+            download = Download(split_name[0], download_url)
+        else:
+            download_url = "https://github.com/CodeSmithyIDE/" + \
+                           split_name[1] + "/archive/master.zip"
+            download = Download(split_name[1], download_url, split_name[0])
+        self.downloader.downloads.append(download)
 
     def _resolve_makefile_path(self, compiler):
         return re.sub(r"\$\(compiler_short_name\)",
