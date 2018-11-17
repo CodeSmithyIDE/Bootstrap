@@ -24,14 +24,15 @@ class CMake:
     def compile(self, makefile_path, logfile):
         previous_working_dir = os.getcwd()
         os.chdir(Path(makefile_path).parent)
-        rc = 0
-        with open(logfile, "w") as output_file:
-            rc = subprocess.call(
-                [previous_working_dir + "/" + self.path, "-G", self.generator, "."],
-                stdout=output_file)
-            if rc == 0:
-                rc = subprocess.call(
+        try:
+            with open(logfile, "w") as output_file:
+                subprocess.check_call(
+                    [previous_working_dir + "/" + self.path, "-G", self.generator, "."],
+                    stdout=output_file)
+                subprocess.check_call(
                     [previous_working_dir + "/" + self.path, "--build", "."],
                     stdout=output_file)
-        os.chdir(previous_working_dir)
-        return rc
+        except subprocess.CalledProcessError:
+            raise RuntimeError("Compilation of " + makefile_path + " failed.")
+        finally:
+            os.chdir(previous_working_dir)
