@@ -86,6 +86,9 @@ class Project:
                       self.makefile_path)
 
 
+class wxWidgetsProject(Project):
+    pass
+
 class Projects:
     def __init__(self):
         self.downloader = Downloader()
@@ -128,44 +131,53 @@ class Projects:
         self.projects.append(Project(
             "Ishiko/WindowsRegistry",
             "ISHIKO",
-            "IshikoWindowsRegistry",
+            "Makefiles/$(compiler_short_name)/IshikoWindowsRegistry.sln",
             True))
         self.projects.append(Project(
             "Ishiko/FileTypes",
             "ISHIKO",
-            "IshikoFileTypes",
+            "Makefiles/$(compiler_short_name)/IshikoFileTypes.sln",
             True))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/UICore",
             "CODESMITHY",
-            "CodeSmithyUICore",
+            "Makefiles/$(compiler_short_name)/CodeSmithyUICore.sln",
             True))
+        self.projects.append(Project(
+            "wxWidgets",
+            "WXWIN",
+            "build/msw/wx_vc15.sln",
+            False))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/UIElements",
             "CODESMITHY",
-            "CodeSmithyUIElements",
+            "Makefiles/$(compiler_short_name)/CodeSmithyUIElements.sln",
             True))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/UIImplementation",
             "CODESMITHY",
-            "CodeSmithyUIImplementation",
+            "Makefiles/$(compiler_short_name)/CodeSmithyUIImplementation.sln",
             True))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/UI",
             "CODESMITHY",
-            "CodeSmithy",
+            "Makefiles/$(compiler_short_name)/CodeSmithy.sln",
             True))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/Tests/Core",
             "CODESMITHY",
-            "CodeSmithyCoreTests",
+            "Makefiles/$(compiler_short_name)/CodeSmithyCoreTests.sln",
             True))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/Tests/Make",
             "CODESMITHY",
-            "CodeSmithyMakeTests",
+            "Makefiles/$(compiler_short_name)/CodeSmithyMakeTests.sln",
             True))
-      #  self.downloads.append(Download("wxWidgets", "TODO"))      
+        self.projects.append(Project(
+            "CodeSmithyIDE/CodeSmithy/Tests/UICore",
+            "CODESMITHY",
+            "Makefiles/$(compiler_short_name)/CodeSmithyUICoreTests.sln",
+            True))
         self._init_downloader()
 
     def get(self, name):
