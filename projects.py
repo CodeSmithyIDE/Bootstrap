@@ -37,8 +37,6 @@ class Project:
 
         split_name = name.split("/")
 
-        self._init_downloader(split_name)
-
         # The installation directory is derived from the project name
         if len(split_name) == 1:
             self.install_dir = split_name[0]
@@ -47,10 +45,11 @@ class Project:
 
         self.built = False
 
-    def _init_downloader(self, split_name):
-        self.downloader = Downloader()
+    def create_downloader(self):
+        downloader = Downloader()
 
         # The download URL is derived from the project name
+        split_name = self.name.split("/")
         download = None
         if len(split_name) == 1:
             download_url = "https://github.com/CodeSmithyIDE/" + \
@@ -60,7 +59,9 @@ class Project:
             download_url = "https://github.com/CodeSmithyIDE/" + \
                            split_name[1] + "/archive/master.zip"
             download = Download(split_name[1], download_url, split_name[0])
-        self.downloader.downloads.append(download)
+        downloader.downloads.append(download)
+
+        return downloader
 
     def unzip(self, downloader):
         split_name = self.name.split("/")
@@ -106,6 +107,13 @@ class Project:
 class wxWidgetsProject(Project):
     def __init__(self):
         super().__init__("wxWidgets", "WXWIN", None, False)
+
+    def create_downloader(self):
+        downloader = super().create_downloader()
+        downloader.downloads.append(
+            Download("zlib",
+                     "https://github.com/CodeSmithyIDE/zlib/archive/wx.zip"))
+        return downloader
 
 
 class Projects:
@@ -244,4 +252,5 @@ class Projects:
 
     def _init_downloader(self):
         for project in self.projects:
-            self.downloader.merge(project.downloader)
+            project_downloader = project.create_downloader()
+            self.downloader.merge(project_downloader)
