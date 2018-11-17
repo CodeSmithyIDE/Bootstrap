@@ -112,8 +112,15 @@ class wxWidgetsProject(Project):
         downloader = super().create_downloader()
         downloader.downloads.append(
             Download("zlib",
-                     "https://github.com/CodeSmithyIDE/zlib/archive/wx.zip"))
+                     "https://github.com/CodeSmithyIDE/zlib/archive/wx.zip",
+                     None,
+                     "wx",
+                     "Build/wxWidgets/src"))
         return downloader
+
+    def unzip(self, downloader):
+        super().unzip(downloader)
+        downloader.unzip("zlib")
 
 
 class Projects:

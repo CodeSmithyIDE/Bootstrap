@@ -6,16 +6,24 @@ import zipfile
 
 
 class Download:
-    def __init__(self, name, url, subdir=""):
+    def __init__(self, name, url, subdir=None, branch="master",
+                 extract_path_prefix=None):
         self.name = name
         self.url = url
-        if subdir == "":
-            self.download_path = "Downloads/" + self.name + "-master.zip"
-            self.extract_path_prefix = "Build"
+        self.branch = branch
+
+        self.download_path = "Downloads/"
+        if subdir is not None:
+            self.download_path += subdir + "/"        
+        self.download_path += self.name + "-" + self.branch + ".zip"
+
+        if extract_path_prefix is not None:
+            self.extract_path_prefix = extract_path_prefix
         else:
-            self.download_path = "Downloads/" + subdir + "/" + \
-                                self.name + "-master.zip"
-            self.extract_path_prefix = "Build/" + subdir
+            self.extract_path_prefix = "Build/"
+            if subdir is not None:
+                self.extract_path_prefix += subdir + "/"
+
         self.unzipped = False
 
     def download(self, substep):
@@ -30,12 +38,12 @@ class Download:
             print("    Unzipping " + self.download_path, flush=True)
             shutil.rmtree(self.extract_path_prefix + "/" + self.name,
                           ignore_errors=True)
-            shutil.rmtree(self.extract_path_prefix + "/" + self.name + "-master",
+            shutil.rmtree(self.extract_path_prefix + "/" + self.name + "-" + self.branch,
                           ignore_errors=True)
             zip_ref = zipfile.ZipFile(self.download_path, "r")
             zip_ref.extractall(self.extract_path_prefix)
             zip_ref.close()
-            os.rename(self.extract_path_prefix + "/" + self.name + "-master",
+            os.rename(self.extract_path_prefix + "/" + self.name + "-" + self.branch,
                       self.extract_path_prefix + "/" + self.name)
         else:
             print("    " + self.download_path + " already unzipped",
