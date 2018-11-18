@@ -79,27 +79,29 @@ def install_cmake(cmake, platform_name, is64bit, state, output):
 def main_bootstrap_build(args, input, state, output):
     print("")
     output.print_main_title()
-    
+
     try_restore_previous_state(input, state)
 
     platform_name = platform.system()
-    is64bit = False
-    if platform.machine() == "AMD64":
-        is64bit = True
+    is_64bit_supported = (platform.machine() == "AMD64")
 
-    print("Platform: " + platform_name)
-    if is64bit:
-        print("Architecture: 64 bit")
-    else:
-        print("Architecture: 32 bit")
     print("")
+    output.print_step_title("Architecture choice")
+    print("    Platform: " + platform_name)
+    selected_architecture = ""
+    if state.architecture == "":
+        selected_architecture = input.query("    Select architecture. [32/64]", ["32", "64"])
+    else:
+        print("    Using previous selection: " + state.architecture)
+    state.set_architecture(selected_architecture)
+    output.next_step()
 
     Path("Build").mkdir(exist_ok=True)
 
     try:
         dependencies = Dependencies()
         dependencies.check(output)
-        
+
         projects = Projects()
 
         projects.set_environment_variables(output)
@@ -113,12 +115,12 @@ def main_bootstrap_build(args, input, state, output):
     try:
         compilers = Compilers()
         compiler = select_compiler(compilers, input, state, output)
-        
+
         cmake = CMake(compiler.cmake_generator)
-        install_cmake(cmake, platform_name, is64bit, state, output)
+        install_cmake(cmake, platform_name, (selected_architecture == "64"), state, output)
 
         codesmithymake = CodeSmithyMake()
-        
+
         projects.build(cmake, compiler, codesmithymake, input, state, output)
     except RuntimeError as error:
         print("")
@@ -136,13 +138,14 @@ def main_launch_project(args, input, state, output):
 
     projects.get(args.launch).launch(compiler)
 
+
 def main():
     args = ArgParser().parse()
 
     input = Input()
     output = Output()
     state = State()
-    
+
     if args.launch is None:
         main_bootstrap_build(args, input, state, output)
     else:

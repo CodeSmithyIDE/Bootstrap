@@ -22,6 +22,10 @@ class State:
         self.reset_variables()
         self.save()
 
+    def set_architecture(self, architecture):
+        self.architecture = architecture
+        self.save()
+
     def set_download_complete(self):
         self.download_complete = True
         self.save()
