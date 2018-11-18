@@ -127,11 +127,15 @@ def main_bootstrap_build(args, input, state, output):
         codesmithymake = CodeSmithyMake(selected_architecture)
 
         compiler_configuration = "Debug|"
+        codesmithymake_configuration = "Microsoft Windows "
         if selected_architecture == "64":
             compiler_configuration += "x64"
+            codesmithymake_configuration += "x86_64"
         else:
             compiler_configuration += "Win32"
-        projects.build(cmake, compiler, compiler_configuration, codesmithymake,
+            codesmithymake_configuration += "x86"
+        projects.build(cmake, compiler, compiler_configuration,
+                       codesmithymake, codesmithymake_configuration,
                        input, state, output)
     except RuntimeError as error:
         print("")

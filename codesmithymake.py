@@ -10,9 +10,9 @@ class CodeSmithyMake:
             self.executable += "Win32"
         self.executable += "/CodeSmithyMake.exe"
 
-    def build(self, compiler, makefile_path, input):
+    def build(self, compiler, makefile_path, configuration, input):
         try:
-            subprocess.check_call([self.executable, makefile_path])
+            subprocess.check_call([self.executable, "-p", configuration, makefile_path])
         except subprocess.CalledProcessError:
             launchIDE = input.query("    Compilation failed. Do you you want to launch the IDE? [y/n]", ["y", "n"])
             if launchIDE == "y":

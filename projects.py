@@ -71,7 +71,8 @@ class Project:
         else:
             downloader.unzip(split_name[1])
 
-    def build(self, cmake, compiler, compiler_configuration, codesmithymake,
+    def build(self, cmake, compiler, compiler_configuration,
+              codesmithymake, codesmithymake_configuration,
               input, output):
         try:
             if self.makefile_path is None:
@@ -83,7 +84,7 @@ class Project:
                 if self.use_codesmithy_make:
                     print("    Using CodeSmithyMake")
                     codesmithymake.build(compiler, resolved_makefile_path,
-                                         input)
+                                         codesmithymake_configuration, input)
                 elif self.makefile_path.endswith("/CMakeLists.txt"):
                     log = self.name + "_build.log"
                     print("    Using CMake, build log: " + log)
@@ -274,7 +275,8 @@ class Projects:
     def download(self):
         self.downloader.download()
 
-    def build(self, cmake, compiler, compiler_configuration, codesmithymake,
+    def build(self, cmake, compiler, compiler_configuration,
+              codesmithymake, codesmithymake_configuration,
               input, state, output):
         # for now only bypass pugixml and libgit2 as more complex logic
         # is required to handle the other projects
@@ -290,7 +292,8 @@ class Projects:
             else:
                 project.unzip(self.downloader)
                 project.build(cmake, compiler, compiler_configuration,
-                              codesmithymake, input, output)
+                              codesmithymake, codesmithymake_configuration,
+                              input, output)
             state.set_built_project(project.name)
             output.next_step()
 
