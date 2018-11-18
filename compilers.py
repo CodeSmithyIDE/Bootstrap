@@ -9,10 +9,10 @@ class Compiler:
         self.executable = executable
         self.cmake_generator = cmake_generator
 
-    def compile(self, makefile_path, input):
+    def compile(self, makefile_path, configuration, input):
         try:
             subprocess.check_call([self.executable, makefile_path,
-                                   "/build", "Debug"])
+                                   "/build", configuration])
         except subprocess.CalledProcessError:
             raise RuntimeError("Compilation of " + makefile_path + " failed.")
 
@@ -28,9 +28,9 @@ class VisualStudio(Compiler):
             cmake_generator += " Win64"
         super().__init__(name, short_name, executable, cmake_generator)
 
-    def compile(self, makefile_path, input):
+    def compile(self, makefile_path, configuration, input):
         try:
-            super().compile(makefile_path, input)
+            super().compile(makefile_path, configuration, input)
         except RuntimeError:
             launchIDE = input.query("    Compilation failed. Do you you want to launch the IDE? [y/n]", ["y", "n"])
             if launchIDE == "y":

@@ -71,7 +71,8 @@ class Project:
         else:
             downloader.unzip(split_name[1])
 
-    def build(self, cmake, compiler, codesmithymake, input, output):
+    def build(self, cmake, compiler, compiler_configuration, codesmithymake,
+              input, output):
         try:
             if self.makefile_path is None:
                 print("    No build required for this project")
@@ -89,7 +90,8 @@ class Project:
                     cmake.compile(resolved_makefile_path, log)
                 else:
                     print("    Using " + compiler.name)
-                    compiler.compile(resolved_makefile_path, input)
+                    compiler.compile(resolved_makefile_path,
+                                     compiler_configuration, input)
                 print("    Project build successfully")
             self.built = True
         except RuntimeError:
@@ -272,7 +274,8 @@ class Projects:
     def download(self):
         self.downloader.download()
 
-    def build(self, cmake, compiler, codesmithymake, input, state, output):
+    def build(self, cmake, compiler, compiler_configuration, codesmithymake,
+              input, state, output):
         # for now only bypass pugixml and libgit2 as more complex logic
         # is required to handle the other projects
         for project in self.projects:
@@ -286,7 +289,8 @@ class Projects:
                 print("    Using previous execution")
             else:
                 project.unzip(self.downloader)
-                project.build(cmake, compiler, codesmithymake, input, output)
+                project.build(cmake, compiler, compiler_configuration,
+                              codesmithymake, input, output)
             state.set_built_project(project.name)
             output.next_step()
 

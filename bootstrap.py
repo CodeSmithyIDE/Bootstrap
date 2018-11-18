@@ -121,11 +121,13 @@ def main_bootstrap_build(args, input, state, output):
         compiler = select_compiler(compilers, input, state, output)
 
         cmake = CMake(compiler.cmake_generator)
-        install_cmake(cmake, platform_name, (selected_architecture == "64"), state, output)
+        install_cmake(cmake, platform_name, (selected_architecture == "64"),
+                      state, output)
 
         codesmithymake = CodeSmithyMake()
 
-        projects.build(cmake, compiler, codesmithymake, input, state, output)
+        projects.build(cmake, compiler, "Debug", codesmithymake, input, state,
+                       output)
     except RuntimeError as error:
         print("")
         print("ERROR:", error)
