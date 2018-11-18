@@ -18,12 +18,14 @@ class Compiler:
 
 
 class VisualStudio(Compiler):
-    def __init__(self, name, short_name, executable):
+    def __init__(self, name, short_name, executable, architecture):
         cmake_generator = ""
         if short_name == "VC14":
             cmake_generator = "Visual Studio 14 2015"
         elif short_name == "VC15":
             cmake_generator = "Visual Studio 15 2017"
+        if architecture == "64":
+            cmake_generator += " Win64"
         super().__init__(name, short_name, executable, cmake_generator)
 
     def compile(self, makefile_path, input):
@@ -40,14 +42,15 @@ class VisualStudio(Compiler):
 
 
 class Compilers:
-    def __init__(self):
+    def __init__(self, architecture):
+        self.architecture = architecture
         self.compilers = []
         foundMSVC14 = os.path.isfile("C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/IDE/devenv.exe")
         if foundMSVC14:
-            self.compilers.append(VisualStudio("Visual Studio 2015", "VC14", "C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/IDE/devenv.exe"))
+            self.compilers.append(VisualStudio("Visual Studio 2015", "VC14", "C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/IDE/devenv.exe", architecture))
         foundMSVC2017 = os.path.isfile("C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/IDE/devenv.exe")
         if foundMSVC2017:
-            self.compilers.append(VisualStudio("Visual Studio 2017", "VC15", "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/IDE/devenv.exe"))
+            self.compilers.append(VisualStudio("Visual Studio 2017", "VC15", "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/IDE/devenv.exe", architecture))
 
     def show_compiler_list(self):
         if len(self.compilers) != 0:

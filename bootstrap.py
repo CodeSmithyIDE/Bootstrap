@@ -117,7 +117,7 @@ def main_bootstrap_build(args, input, state, output):
     download_source_packages(projects, args.skip_downloads, state, output)
 
     try:
-        compilers = Compilers()
+        compilers = Compilers(selected_architecture)
         compiler = select_compiler(compilers, input, state, output)
 
         cmake = CMake(compiler.cmake_generator)
