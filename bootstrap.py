@@ -90,7 +90,11 @@ def main_bootstrap_build(args, input, state, output):
     print("    Platform: " + platform_name)
     selected_architecture = ""
     if state.architecture == "":
-        selected_architecture = input.query("    Select architecture. [32/64]", ["32", "64"])
+        if is_64bit_supported:
+            selected_architecture = input.query("    Select architecture. [32/64]", ["32", "64"])
+        else:
+            print("    Only 32-bit build supported")
+            selected_architecture = "32"
     else:
         print("    Using previous selection: " + state.architecture)
     state.set_architecture(selected_architecture)
