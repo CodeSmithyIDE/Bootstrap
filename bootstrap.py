@@ -11,6 +11,7 @@ from dependencies import Dependencies
 from projects import Projects
 from cmake import CMake
 from compilers import Compilers
+from compilers import VisualStudio
 from codesmithymake import CodeSmithyMake
 
 
@@ -120,13 +121,18 @@ def main_bootstrap_build(args, input, state, output):
         compilers = Compilers(selected_architecture)
         compiler = select_compiler(compilers, input, state, output)
 
+        if isinstance(compiler, VisualStudio):
+            compiler_configuration = input.query("    Choose configuration. [Debug/Release]", ["Debug", "Release"])
+
         cmake = CMake(compiler.cmake_generator)
         install_cmake(cmake, platform_name, (selected_architecture == "64"),
                       state, output)
 
         codesmithymake = CodeSmithyMake(selected_architecture)
 
-        compiler_configuration = "Debug|"
+        cmake_configuration = compiler_configuration
+        
+        compiler_configuration += "|"
         codesmithymake_configuration = "Microsoft Windows "
         if selected_architecture == "64":
             compiler_configuration += "x64"
@@ -134,7 +140,9 @@ def main_bootstrap_build(args, input, state, output):
         else:
             compiler_configuration += "Win32"
             codesmithymake_configuration += "x86"
-        projects.build(cmake, compiler, compiler_configuration,
+        
+        projects.build(cmake, cmake_configuration,
+                       compiler, compiler_configuration,
                        codesmithymake, codesmithymake_configuration,
                        input, state, output)
     except RuntimeError as error:

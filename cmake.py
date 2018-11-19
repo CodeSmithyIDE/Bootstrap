@@ -21,7 +21,7 @@ class CMake:
             zip_ref.extractall("Build")
             zip_ref.close()
 
-    def compile(self, makefile_path, logfile):
+    def compile(self, makefile_path, configuration, logfile):
         previous_working_dir = os.getcwd()
         os.chdir(Path(makefile_path).parent)
         try:
@@ -30,7 +30,7 @@ class CMake:
                     [previous_working_dir + "/" + self.path, "-G", self.generator, "."],
                     stdout=output_file)
                 subprocess.check_call(
-                    [previous_working_dir + "/" + self.path, "--build", "."],
+                    [previous_working_dir + "/" + self.path, "--build", ".", "--config", configuration],
                     stdout=output_file)
         except subprocess.CalledProcessError:
             raise RuntimeError("Compilation of " + makefile_path + " failed.")

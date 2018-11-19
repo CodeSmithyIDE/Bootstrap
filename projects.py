@@ -71,7 +71,8 @@ class Project:
         else:
             downloader.unzip(split_name[1])
 
-    def build(self, cmake, compiler, compiler_configuration,
+    def build(self, cmake, cmake_configuration,
+              compiler, compiler_configuration,
               codesmithymake, codesmithymake_configuration,
               input, output):
         try:
@@ -88,7 +89,8 @@ class Project:
                 elif self.makefile_path.endswith("/CMakeLists.txt"):
                     log = self.name + "_build.log"
                     print("    Using CMake, build log: " + log)
-                    cmake.compile(resolved_makefile_path, log)
+                    cmake.compile(resolved_makefile_path, cmake_configuration,
+                                  log)
                 else:
                     print("    Using " + compiler.name)
                     compiler.compile(resolved_makefile_path,
@@ -275,7 +277,8 @@ class Projects:
     def download(self):
         self.downloader.download()
 
-    def build(self, cmake, compiler, compiler_configuration,
+    def build(self, cmake, cmake_configuration,
+              compiler, compiler_configuration,
               codesmithymake, codesmithymake_configuration,
               input, state, output):
         # for now only bypass pugixml and libgit2 as more complex logic
@@ -291,7 +294,8 @@ class Projects:
                 print("    Using previous execution")
             else:
                 project.unzip(self.downloader)
-                project.build(cmake, compiler, compiler_configuration,
+                project.build(cmake, cmake_configuration,
+                              compiler, compiler_configuration,
                               codesmithymake, codesmithymake_configuration,
                               input, output)
             state.set_built_project(project.name)
