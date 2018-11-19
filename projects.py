@@ -1,6 +1,7 @@
 from typing import Optional
 import os
 import re
+import subprocess
 from download import Downloader
 from download import Download
 
@@ -247,6 +248,7 @@ class Projects:
             "Makefiles/$(compiler_short_name)/CodeSmithyUICoreTests.sln",
             True))
         self.tests = []
+        self.tests.append("Build/CodeSmithyIDE/CodeSmithy/Tests/Core/Makefiles/VC15/x64/Debug/CodeSmithyCoreTests")
         self._init_downloader()
 
     def get(self, name):
@@ -309,7 +311,7 @@ class Projects:
 
     def test(self):
         for test in self.tests:
-            test.run()
+            subprocess.check_call([test])
 
     def _init_downloader(self):
         for project in self.projects:
