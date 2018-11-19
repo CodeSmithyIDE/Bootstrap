@@ -49,7 +49,7 @@ class State:
         self.save()
 
     def set_build_complete(self):
-        self.set_build_complete = True
+        self.build_complete = True
         self.save()
 
     def save(self):
