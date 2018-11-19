@@ -1,7 +1,6 @@
 import platform
 import sys
 import subprocess
-import shutil
 from pathlib import Path
 from input import Input
 from output import Output
@@ -13,6 +12,7 @@ from cmake import CMake
 from compilers import Compilers
 from compilers import VisualStudio
 from codesmithymake import CodeSmithyMake
+from utils import Utils
 
 
 def try_restore_previous_state(input, state):
@@ -22,16 +22,16 @@ def try_restore_previous_state(input, state):
             ["y", "n"])
         if resume == "n":
             state.reset()
-            shutil.rmtree("Build", ignore_errors=True)
+            Utils.rmdir_with_retry("Build", input)
 
 
-def download_source_packages(projects, skip, state, output):
+def download_source_packages(projects, skip, input, state, output):
     print("")
     output.print_step_title("Downloading source packages")
     if skip:
         print("    Skipping downloads")
     elif not state.download_complete:
-        shutil.rmtree("Downloads", ignore_errors=True)
+        Utils.rmdir_with_retry("Downloads", input)
         projects.download()
     else:
         print("    Using previous execution")
@@ -115,7 +115,8 @@ def main_bootstrap_build(args, input, state, output):
         print("ERROR:", error)
         sys.exit(-1)
 
-    download_source_packages(projects, args.skip_downloads, state, output)
+    download_source_packages(projects, args.skip_downloads, input,
+                             state, output)
 
     try:
         compilers = Compilers(selected_architecture)
