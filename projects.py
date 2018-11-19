@@ -282,29 +282,29 @@ class Projects:
               compiler, compiler_configuration,
               codesmithymake, codesmithymake_configuration,
               input, state, output):
-        if state.build_complete:
-            print("    Using previous execution")
-        else:
-            # for now only bypass pugixml, libgit2 and wxWidgets because they
-            # are independent from the rest. More complex logic is required to
-            # handle the other projects
-            for project in self.projects:
-                if project.name in ["libgit2", "pugixml", "wxWidgets"]:
-                    if project.name in state.built_projects:
-                        project.built = True
-            for project in self.projects:
-                print("")
-                output.print_step_title("Building " + project.name)
-                if project.built:
-                    print("    Using previous execution")
-                else:
-                    project.unzip(self.downloader)
-                    project.build(cmake, cmake_configuration,
-                                  compiler, compiler_configuration,
-                                  codesmithymake, codesmithymake_configuration,
-                                  input, output)
-                state.set_built_project(project.name)
-                output.next_step()
+        # For now only bypass pugixml, libgit2 and wxWidgets because they
+        # are independent from the rest. More complex logic is required to
+        # handle the other projects.
+        # Unless we have built all project succesfully.
+        for project in self.projects:
+            if state.build_complete:
+                project.built = True
+            elif project.name in ["libgit2", "pugixml", "wxWidgets"]:
+                if project.name in state.built_projects:
+                    project.built = True
+        for project in self.projects:
+            print("")
+            output.print_step_title("Building " + project.name)
+            if project.built:
+                print("    Using previous execution")
+            else:
+                project.unzip(self.downloader)
+                project.build(cmake, cmake_configuration,
+                              compiler, compiler_configuration,
+                              codesmithymake, codesmithymake_configuration,
+                              input, output)
+            state.set_built_project(project.name)
+            output.next_step()
         state.set_build_complete()
 
     def test(self):
