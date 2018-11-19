@@ -285,10 +285,11 @@ class Projects:
         if state.build_complete:
             print("    Using previous execution")
         else:
-            # for now only bypass pugixml and libgit2 as more complex logic
-            # is required to handle the other projects
+            # for now only bypass pugixml, libgit2 and wxWidgets because they
+            # are independent from the rest. More complex logic is required to
+            # handle the other projects
             for project in self.projects:
-                if project.name == "libgit2" or project.name == "pugixml":
+                if project.name in ["libgit2", "pugixml", "wxWidgets"]:
                     if project.name in state.built_projects:
                         project.built = True
             for project in self.projects:

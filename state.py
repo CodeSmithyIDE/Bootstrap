@@ -48,7 +48,7 @@ class State:
         self.built_projects.add(project)
         self.save()
 
-    def set_build_complete():
+    def set_build_complete(self):
         self.set_build_complete = True
         self.save()
 
