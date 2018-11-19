@@ -97,7 +97,8 @@ def main_bootstrap_build(args, input, state, output):
             print("    Only 32-bit build supported")
             selected_architecture = "32"
     else:
-        print("    Using previous selection: " + state.architecture)
+        selected_architecture = state.architecture
+        print("    Using previous selection: " + selected_architecture)
     state.set_architecture(selected_architecture)
     output.next_step()
 
@@ -123,7 +124,12 @@ def main_bootstrap_build(args, input, state, output):
         compiler = select_compiler(compilers, input, state, output)
 
         if isinstance(compiler, VisualStudio):
-            compiler_configuration = input.query("    Choose configuration. [Debug/Release]", ["Debug", "Release"])
+            if state.compiler_configuration == "":
+                compiler_configuration = input.query("    Choose configuration. [Debug/Release]", ["Debug", "Release"])
+                state.set_compiler_configuration(compiler_configuration)
+            else:
+                compiler_configuration = state.compiler_configuration
+                print("    Using previous selection: " + compiler_configuration)
 
         cmake = CMake(compiler.cmake_generator)
         install_cmake(cmake, platform_name, (selected_architecture == "64"),
@@ -146,6 +152,8 @@ def main_bootstrap_build(args, input, state, output):
                        compiler, compiler_configuration,
                        codesmithymake, codesmithymake_configuration,
                        input, state, output)
+
+        projects.test()
     except RuntimeError as error:
         print("")
         print("ERROR:", error)

@@ -246,6 +246,7 @@ class Projects:
             "CODESMITHY",
             "Makefiles/$(compiler_short_name)/CodeSmithyUICoreTests.sln",
             True))
+        self.tests = []
         self._init_downloader()
 
     def get(self, name):
@@ -281,25 +282,33 @@ class Projects:
               compiler, compiler_configuration,
               codesmithymake, codesmithymake_configuration,
               input, state, output):
-        # for now only bypass pugixml and libgit2 as more complex logic
-        # is required to handle the other projects
-        for project in self.projects:
-            if project.name == "libgit2" or project.name == "pugixml":
-                if project.name in state.built_projects:
-                    project.built = True
-        for project in self.projects:
-            print("")
-            output.print_step_title("Building " + project.name)
-            if project.built:
-                print("    Using previous execution")
-            else:
-                project.unzip(self.downloader)
-                project.build(cmake, cmake_configuration,
-                              compiler, compiler_configuration,
-                              codesmithymake, codesmithymake_configuration,
-                              input, output)
-            state.set_built_project(project.name)
-            output.next_step()
+        if state.build_complete:
+            print("    Using previous execution")
+        else:
+            # for now only bypass pugixml and libgit2 as more complex logic
+            # is required to handle the other projects
+            for project in self.projects:
+                if project.name == "libgit2" or project.name == "pugixml":
+                    if project.name in state.built_projects:
+                        project.built = True
+            for project in self.projects:
+                print("")
+                output.print_step_title("Building " + project.name)
+                if project.built:
+                    print("    Using previous execution")
+                else:
+                    project.unzip(self.downloader)
+                    project.build(cmake, cmake_configuration,
+                                  compiler, compiler_configuration,
+                                  codesmithymake, codesmithymake_configuration,
+                                  input, output)
+                state.set_built_project(project.name)
+                output.next_step()
+        state.set_build_complete()
+
+    def test(self):
+        for test in self.tests:
+            test.run()
 
     def _init_downloader(self):
         for project in self.projects:
