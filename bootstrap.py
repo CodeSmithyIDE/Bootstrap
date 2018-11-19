@@ -153,7 +153,8 @@ def main_bootstrap_build(args, input, state, output):
                        codesmithymake, codesmithymake_configuration,
                        input, state, output)
 
-        projects.test()
+        if not args.skip_tests:
+            projects.test()
     except RuntimeError as error:
         print("")
         print("ERROR:", error)
