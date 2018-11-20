@@ -72,15 +72,17 @@ class Project:
         else:
             downloader.unzip(split_name[1])
 
-    def build(self, cmake, cmake_configuration,
+    def build(self, cmake_configuration,
               build_tools, compiler_configuration,
-              codesmithymake, codesmithymake_configuration,
+              codesmithymake_configuration,
               input, output):
         try:
             if self.makefile_path is None:
                 print("    No build required for this project")
             else:
+                cmake = build_tools.cmake
                 compiler = build_tools.compiler
+                codesmithymake = build_tools.codesmithymake
                 resolved_makefile_path = self._resolve_makefile_path(compiler)
                 if not os.path.exists(resolved_makefile_path):
                     raise RuntimeError(resolved_makefile_path + " not found")
@@ -282,9 +284,9 @@ class Projects:
     def download(self):
         self.downloader.download()
 
-    def build(self, cmake, cmake_configuration,
+    def build(self, cmake_configuration,
               build_tools, compiler_configuration,
-              codesmithymake, codesmithymake_configuration,
+              codesmithymake_configuration,
               input, state, output):
         # For now only bypass pugixml, libgit2 and wxWidgets because they
         # are independent from the rest. More complex logic is required to
@@ -303,9 +305,9 @@ class Projects:
                 print("    Using previous execution")
             else:
                 project.unzip(self.downloader)
-                project.build(cmake, cmake_configuration,
+                project.build(cmake_configuration,
                               build_tools, compiler_configuration,
-                              codesmithymake, codesmithymake_configuration,
+                              codesmithymake_configuration,
                               input, output)
             state.set_built_project(project.name)
             output.next_step()
