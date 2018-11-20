@@ -73,13 +73,14 @@ class Project:
             downloader.unzip(split_name[1])
 
     def build(self, cmake, cmake_configuration,
-              compiler, compiler_configuration,
+              build_tools, compiler_configuration,
               codesmithymake, codesmithymake_configuration,
               input, output):
         try:
             if self.makefile_path is None:
                 print("    No build required for this project")
             else:
+                compiler = build_tools.compiler
                 resolved_makefile_path = self._resolve_makefile_path(compiler)
                 if not os.path.exists(resolved_makefile_path):
                     raise RuntimeError(resolved_makefile_path + " not found")
@@ -282,7 +283,7 @@ class Projects:
         self.downloader.download()
 
     def build(self, cmake, cmake_configuration,
-              compiler, compiler_configuration,
+              build_tools, compiler_configuration,
               codesmithymake, codesmithymake_configuration,
               input, state, output):
         # For now only bypass pugixml, libgit2 and wxWidgets because they
@@ -303,7 +304,7 @@ class Projects:
             else:
                 project.unzip(self.downloader)
                 project.build(cmake, cmake_configuration,
-                              compiler, compiler_configuration,
+                              build_tools, compiler_configuration,
                               codesmithymake, codesmithymake_configuration,
                               input, output)
             state.set_built_project(project.name)

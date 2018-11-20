@@ -32,7 +32,7 @@ class VisualStudio(Compiler):
         try:
             super().compile(makefile_path, configuration, input)
         except RuntimeError:
-            launchIDE = input.query("    Compilation failed. Do you you want to launch the IDE? [y/n]", ["y", "n"])
+            launchIDE = input.query("    Compilation failed. Do you you want to launch the IDE?", ["y", "n"], "n")
             if launchIDE == "y":
                 self.launch(makefile_path)
             raise

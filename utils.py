@@ -11,6 +11,6 @@ class Utils:
             except BaseException as error:
                 print("Error while trying to remove directory " + dir_path + ":",
                       error)
-                answer = input.query("Do you want to retry? [y/n]", ["y", "n"])
+                answer = input.query("Do you want to retry?", ["y", "n"], "y")
                 if answer == "n":
                     raise

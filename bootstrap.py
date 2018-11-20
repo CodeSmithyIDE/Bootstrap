@@ -14,6 +14,7 @@ from cmake import CMake
 from compilers import Compilers
 from compilers import VisualStudio
 from codesmithymake import CodeSmithyMake
+from build import BuildTools
 from utils import Utils
 
 
@@ -139,6 +140,8 @@ def main_bootstrap_build(args, input, state, output):
 
         codesmithymake = CodeSmithyMake(selected_architecture)
 
+        build_tools = BuildTools(compiler)
+
         cmake_configuration = compiler_configuration
         
         compiler_configuration += "|"
@@ -151,7 +154,7 @@ def main_bootstrap_build(args, input, state, output):
             codesmithymake_configuration += "x86"
         
         projects.build(cmake, cmake_configuration,
-                       compiler, compiler_configuration,
+                       build_tools, compiler_configuration,
                        codesmithymake, codesmithymake_configuration,
                        input, state, output)
 
@@ -183,6 +186,8 @@ def main_bootstrap_build(args, input, state, output):
 def main_launch_project(args, input, state, output):
     projects = Projects()
 
+    # TODO: restore state
+    # TODO: this is broken, an argument is missing
     compilers = Compilers()
     compiler = select_compiler(compilers, input, state, output)
 
