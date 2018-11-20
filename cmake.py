@@ -26,9 +26,15 @@ class CMake:
         os.chdir(Path(makefile_path).parent)
         try:
             with open(logfile, "w") as output_file:
-                subprocess.check_call(
-                    [previous_working_dir + "/" + self.path, "-G", self.generator, "."],
-                    stdout=output_file)
+                # TODO
+                if makefile_path.find("libgit2") != -1:
+                    subprocess.check_call(
+                        [previous_working_dir + "/" + self.path, "-G", self.generator, ".", "-DBUILD_SHARED_LIBS=OFF", "-DSTATIC_CRT=OFF"],
+                        stdout=output_file)
+                else:
+                    subprocess.check_call(
+                        [previous_working_dir + "/" + self.path, "-G", self.generator, "."],
+                        stdout=output_file)
                 subprocess.check_call(
                     [previous_working_dir + "/" + self.path, "--build", ".", "--config", configuration],
                     stdout=output_file)

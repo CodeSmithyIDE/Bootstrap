@@ -248,6 +248,7 @@ class Projects:
             "Makefiles/$(compiler_short_name)/CodeSmithyUICoreTests.sln",
             True))
         self.tests = []
+        # TODO
         self.tests.append("Build/CodeSmithyIDE/CodeSmithy/Tests/Core/Makefiles/VC15/x64/Debug/CodeSmithyCoreTests")
         self._init_downloader()
 
@@ -311,6 +312,7 @@ class Projects:
 
     def test(self):
         for test in self.tests:
+            # TODO
             subprocess.check_call([test])
 
     def _init_downloader(self):
