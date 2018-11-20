@@ -20,8 +20,8 @@ from utils import Utils
 def try_restore_previous_state(input, state):
     if state.previous_state_found:
         resume = input.query(
-            "Previous execution detected. Do you want to resume it? [y/n]",
-            ["y", "n"])
+            "Previous execution detected. Do you want to resume it?",
+            ["y", "n"], "n")
         if resume == "n":
             state.reset()
             Utils.rmdir_with_retry("Build", input)
@@ -53,7 +53,7 @@ def select_compiler(compilers, input, state, output):
         valid_answers = []
         for i in range(1, len(compilers.compilers) + 1):
             valid_answers.append(str(i))
-        answer = input.query("    Select the compiler to use:", valid_answers)
+        answer = input.query("    Select the compiler to use:", valid_answers, "1")
         selected_compiler_index = (int(answer) - 1)
         compiler = compilers.compilers[selected_compiler_index]
     else:
@@ -94,7 +94,7 @@ def main_bootstrap_build(args, input, state, output):
     selected_architecture = ""
     if state.architecture == "":
         if is_64bit_supported:
-            selected_architecture = input.query("    Select architecture. [32/64]", ["32", "64"])
+            selected_architecture = input.query("    Select architecture.", ["32", "64"], "64")
         else:
             print("    Only 32-bit build supported")
             selected_architecture = "32"
@@ -127,7 +127,7 @@ def main_bootstrap_build(args, input, state, output):
 
         if isinstance(compiler, VisualStudio):
             if state.compiler_configuration == "":
-                compiler_configuration = input.query("    Choose configuration. [Debug/Release]", ["Debug", "Release"])
+                compiler_configuration = input.query("    Choose configuration.", ["Debug", "Release"], "Debug")
                 state.set_compiler_configuration(compiler_configuration)
             else:
                 compiler_configuration = state.compiler_configuration
