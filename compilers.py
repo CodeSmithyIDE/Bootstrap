@@ -51,8 +51,30 @@ class Compilers:
         foundMSVC14 = os.path.isfile("C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/IDE/devenv.exe")
         if foundMSVC14:
             self.compilers.append(VisualStudio("Visual Studio 2015", "VC14", "C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/IDE/devenv.exe", architecture))
-        
-    def show_compiler_list(self):
+
+    def select_compiler(self, input, state, output):
+        print("")
+        output.print_step_title("Finding compilers")
+        compiler = None
+        if state.selected_compiler == "":
+            self._show_compiler_list()
+            if len(self.compilers) == 0:
+                print("")
+                raise RuntimeError("No compilers found")
+            valid_answers = []
+            for i in range(1, len(self.compilers) + 1):
+                valid_answers.append(str(i))
+            answer = input.query("    Select the compiler to use:", valid_answers, "1")
+            selected_compiler_index = (int(answer) - 1)
+            compiler = self.compilers[selected_compiler_index]
+        else:
+            compiler = self._find_by_name(state.selected_compiler)
+            print("    Using previous selection: " + compiler.name)
+        state.set_selected_compiler(compiler.name)
+        output.next_step()
+        return compiler
+
+    def _show_compiler_list(self):
         if len(self.compilers) != 0:
             print("    The following compilers have been found")
             for i, compiler in enumerate(self.compilers):
@@ -60,7 +82,7 @@ class Compilers:
         else:
             print("    No compilers have been found")
 
-    def find_by_name(self, name):
+    def _find_by_name(self, name):
         for compiler in self.compilers:
             if compiler.name == name:
                 return compiler

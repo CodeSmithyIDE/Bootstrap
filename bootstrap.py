@@ -42,29 +42,6 @@ def download_source_packages(projects, skip, input, state, output):
     output.next_step()
 
 
-def select_compiler(compilers, input, state, output):
-    print("")
-    output.print_step_title("Finding compilers")
-    compiler = None
-    if state.selected_compiler == "":
-        compilers.show_compiler_list()
-        if len(compilers.compilers) == 0:
-            print("")
-            raise RuntimeError("No compilers found")
-        valid_answers = []
-        for i in range(1, len(compilers.compilers) + 1):
-            valid_answers.append(str(i))
-        answer = input.query("    Select the compiler to use:", valid_answers, "1")
-        selected_compiler_index = (int(answer) - 1)
-        compiler = compilers.compilers[selected_compiler_index]
-    else:
-        compiler = compilers.find_by_name(state.selected_compiler)
-        print("    Using previous selection: " + compiler.name)
-    state.set_selected_compiler(compiler.name)
-    output.next_step()
-    return compiler
-
-
 def install_cmake(cmake, platform_name, is64bit, state, output):
     # CMake is not easily buildable on Windows so we rely on a binary
     # distribution
@@ -124,7 +101,7 @@ def main_bootstrap_build(args, input, state, output):
 
     try:
         compilers = Compilers(selected_architecture)
-        compiler = select_compiler(compilers, input, state, output)
+        compiler = compilers.select_compiler(input, state, output)
 
         if isinstance(compiler, VisualStudio):
             if state.compiler_configuration == "":
