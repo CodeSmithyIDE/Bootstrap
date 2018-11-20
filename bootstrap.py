@@ -1,6 +1,8 @@
 import platform
+import os
 import sys
 import subprocess
+import shutil
 from pathlib import Path
 from input import Input
 from output import Output
@@ -153,8 +155,23 @@ def main_bootstrap_build(args, input, state, output):
                        codesmithymake, codesmithymake_configuration,
                        input, state, output)
 
-        if not args.skip_tests:
+        print("")
+        output.print_step_title("Running tests")
+        if args.skip_tests:
+            print("    Skipping tests")
+        else:
             projects.test()
+        output.next_step()
+
+        print("")
+        output.print_step_title("Setting up second-phase of bootstrap")
+        second_phase_path = str(Path(os.getcwd()).parent) + \
+                            "/SecondPhaseBootstrap"
+        Path(second_phase_path).mkdir(exist_ok=True)
+        print(second_phase_path)
+        # TODO
+        shutil.copyfile("Build/CodeSmithyIDE/CodeSmithy/Bin/x64/CodeSmithy.exe", second_phase_path + "/CodeSmithy.exe")
+        output.next_step()
     except RuntimeError as error:
         print("")
         print("ERROR:", error)
