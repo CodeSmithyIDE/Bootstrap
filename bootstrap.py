@@ -104,8 +104,7 @@ def main_bootstrap_build(args, input, state, output):
         codesmithymake = CodeSmithyMake(selected_architecture)
 
         build_tools = BuildTools(cmake, compiler, codesmithymake)
-        build_configuration = BuildConfiguration(compiler_configuration)
-
+        
         cmake_configuration = compiler_configuration
         
         compiler_configuration += "|"
@@ -116,7 +115,9 @@ def main_bootstrap_build(args, input, state, output):
         else:
             compiler_configuration += "Win32"
             codesmithymake_configuration += "x86"
-        
+
+        build_configuration = BuildConfiguration(compiler_configuration)
+
         projects.build(cmake_configuration,
                        build_tools, build_configuration,
                        codesmithymake_configuration,
