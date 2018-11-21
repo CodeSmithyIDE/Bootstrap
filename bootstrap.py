@@ -42,21 +42,6 @@ def download_source_packages(projects, skip, input, state, output):
     output.next_step()
 
 
-def install_cmake(cmake, platform_name, is64bit, state, output):
-    # CMake is not easily buildable on Windows so we rely on a binary
-    # distribution
-    print("")
-    output.print_step_title("Installing CMake")
-    if state.cmake_path == "":
-        cmake.install(platform_name, is64bit)
-        print("    CMake installed successfully")
-    else:
-        cmake.path = state.cmake_path
-        print("    Using previous installation: " + cmake.path)
-    state.set_cmake_path(cmake.path)
-    output.next_step()
-
-
 def main_bootstrap_build(args, input, state, output):
     print("")
     output.print_main_title()
@@ -112,7 +97,7 @@ def main_bootstrap_build(args, input, state, output):
                 print("    Using previous selection: " + compiler_configuration)
 
         cmake = CMake(compiler.cmake_generator)
-        install_cmake(cmake, platform_name, (selected_architecture == "64"),
+        cmake.install(platform_name, (selected_architecture == "64"),
                       state, output)
 
         codesmithymake = CodeSmithyMake(selected_architecture)

@@ -8,18 +8,19 @@ class CMake:
     def __init__(self, generator):
         self.generator = generator
 
-    def install(self, platform_name, is64bit):
-        self.path = ""
-        if platform_name == "Windows":
-            if is64bit:
-                zip_ref = zipfile.ZipFile("CMake/cmake-3.12.3-win64-x64.zip", "r")
-                self.path = "Build/cmake-3.12.3-win64-x64/bin/cmake.exe"
-            else:
-                zip_ref = zipfile.ZipFile("CMake/cmake-3.12.3-win32-x86.zip", "r")
-                self.path = "Build/cmake-3.12.3-win32-x86/bin/cmake.exe"
-            shutil.rmtree(self.path, ignore_errors=True)
-            zip_ref.extractall("Build")
-            zip_ref.close()
+    def install(self, platform_name, is64bit, state, output):
+        # CMake is not easily buildable on Windows so we rely on a binary
+        # distribution
+        print("")
+        output.print_step_title("Installing CMake")
+        if state.cmake_path == "":
+            self._install(platform_name, is64bit)
+            print("    CMake installed successfully")
+        else:
+            self.path = state.cmake_path
+            print("    Using previous installation: " + self.path)
+        state.set_cmake_path(self.path)
+        output.next_step()
 
     def compile(self, makefile_path, configuration, logfile):
         previous_working_dir = os.getcwd()
@@ -42,3 +43,16 @@ class CMake:
             raise RuntimeError("Compilation of " + makefile_path + " failed.")
         finally:
             os.chdir(previous_working_dir)
+
+    def _install(self, platform_name, is64bit):
+        self.path = ""
+        if platform_name == "Windows":
+            if is64bit:
+                zip_ref = zipfile.ZipFile("CMake/cmake-3.12.3-win64-x64.zip", "r")
+                self.path = "Build/cmake-3.12.3-win64-x64/bin/cmake.exe"
+            else:
+                zip_ref = zipfile.ZipFile("CMake/cmake-3.12.3-win32-x86.zip", "r")
+                self.path = "Build/cmake-3.12.3-win32-x86/bin/cmake.exe"
+            shutil.rmtree(self.path, ignore_errors=True)
+            zip_ref.extractall("Build")
+            zip_ref.close()
