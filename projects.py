@@ -73,7 +73,7 @@ class Project:
             downloader.unzip(split_name[1])
 
     def build(self, cmake_configuration,
-              build_tools, compiler_configuration,
+              build_tools, build_configuration,
               codesmithymake_configuration,
               input, output):
         try:
@@ -98,7 +98,8 @@ class Project:
                 else:
                     print("    Using " + compiler.name)
                     compiler.compile(resolved_makefile_path,
-                                     compiler_configuration, input)
+                                     build_configuration.compiler_configuration,
+                                     input)
                 print("    Project build successfully")
             self.built = True
         except RuntimeError:
@@ -285,7 +286,7 @@ class Projects:
         self.downloader.download()
 
     def build(self, cmake_configuration,
-              build_tools, compiler_configuration,
+              build_tools, build_configuration,
               codesmithymake_configuration,
               input, state, output):
         # For now only bypass pugixml, libgit2 and wxWidgets because they
@@ -306,7 +307,7 @@ class Projects:
             else:
                 project.unzip(self.downloader)
                 project.build(cmake_configuration,
-                              build_tools, compiler_configuration,
+                              build_tools, build_configuration,
                               codesmithymake_configuration,
                               input, output)
             state.set_built_project(project.name)

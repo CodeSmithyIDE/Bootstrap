@@ -15,6 +15,7 @@ from compilers import Compilers
 from compilers import VisualStudio
 from codesmithymake import CodeSmithyMake
 from build import BuildTools
+from build import BuildConfiguration
 from utils import Utils
 
 
@@ -103,6 +104,7 @@ def main_bootstrap_build(args, input, state, output):
         codesmithymake = CodeSmithyMake(selected_architecture)
 
         build_tools = BuildTools(cmake, compiler, codesmithymake)
+        build_configuration = BuildConfiguration(compiler_configuration)
 
         cmake_configuration = compiler_configuration
         
@@ -116,7 +118,7 @@ def main_bootstrap_build(args, input, state, output):
             codesmithymake_configuration += "x86"
         
         projects.build(cmake_configuration,
-                       build_tools, compiler_configuration,
+                       build_tools, build_configuration,
                        codesmithymake_configuration,
                        input, state, output)
 
