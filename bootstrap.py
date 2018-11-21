@@ -155,8 +155,6 @@ def main_bootstrap_build(args, input, state, output):
         print("ERROR:", error)
         sys.exit(-1)
 
-    codeSmithyMakePath = "Build/CodeSmithyIDE/CodeSmithy/Bin/Win32/CodeSmithyMake.exe"
-
 
 def main_launch_project(args, input, state, output):
     projects = Projects()
