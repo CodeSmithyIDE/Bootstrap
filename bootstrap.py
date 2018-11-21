@@ -108,7 +108,7 @@ def main_bootstrap_build(args, input, state, output):
         compiler_configuration = select_configuration(compiler, input, state)
 
         cmake = CMake(compiler.cmake_generator)
-        cmake.install(platform_name, (selected_architecture == "64"),
+        cmake.install(platform.system(), (selected_architecture == "64"),
                       state, output)
 
         codesmithymake = CodeSmithyMake(selected_architecture)
