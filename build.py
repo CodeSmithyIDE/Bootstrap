@@ -13,20 +13,21 @@ class BuildConfiguration:
         DEBUG = 1
         RELEASE = 2
 
-    def __init__(self, selected_architecture, compiler_configuration):
+    def select_configuration(self, architecture, compiler, input, state):
+        compiler_configuration = self._select_compiler_configuration(compiler, input, state)
         self.cmake_configuration = compiler_configuration
         self.compiler_configuration = compiler_configuration + "|"
-        if selected_architecture == "64":
+        if architecture == "64":
             self.compiler_configuration += "x64"
         else:
             self.compiler_configuration += "Win32"
         self.codesmithymake_configuration = "Microsoft Windows "
-        if selected_architecture == "64":
+        if architecture == "64":
             self.codesmithymake_configuration += "x86_64"
         else:
             self.codesmithymake_configuration += "x86"
 
-    def select_configuration(compiler, input, state):
+    def _select_compiler_configuration(self, compiler, input, state):
         compiler_configuration = None
         if isinstance(compiler, VisualStudio):
             if state.compiler_configuration == "":

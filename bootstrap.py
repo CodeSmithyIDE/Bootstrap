@@ -93,10 +93,10 @@ def main_bootstrap_build(args, input, state, output):
         compilers = Compilers(selected_architecture)
         compiler = compilers.select_compiler(input, state, output)
 
-        compiler_configuration = BuildConfiguration.select_configuration(compiler, input, state)
-        build_configuration = BuildConfiguration(selected_architecture,
-                                                 compiler_configuration)
-
+        build_configuration = BuildConfiguration()
+        build_configuration.select_configuration(selected_architecture,
+                                                 compiler, input, state)
+        
         cmake = CMake(compiler.cmake_generator)
         cmake.install(platform.system(), (selected_architecture == "64"),
                       state, output)
