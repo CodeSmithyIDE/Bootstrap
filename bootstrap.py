@@ -12,7 +12,6 @@ from dependencies import Dependencies
 from projects import Projects
 from cmake import CMake
 from compilers import Compilers
-from compilers import VisualStudio
 from codesmithymake import CodeSmithyMake
 from build import BuildTools
 from build import BuildConfiguration
@@ -64,17 +63,6 @@ def select_architecture(input, state, output):
     output.next_step()
     return selected_architecture
 
-def select_configuration(compiler, input, state):
-    compiler_configuration = None
-    if isinstance(compiler, VisualStudio):
-        if state.compiler_configuration == "":
-            compiler_configuration = input.query("    Choose configuration.", ["Debug", "Release"], "Debug")
-            state.set_compiler_configuration(compiler_configuration)
-        else:
-            compiler_configuration = state.compiler_configuration
-            print("    Using previous selection: " + compiler_configuration)
-    return compiler_configuration
-
 
 def main_bootstrap_build(args, input, state, output):
     print("")
@@ -105,7 +93,7 @@ def main_bootstrap_build(args, input, state, output):
         compilers = Compilers(selected_architecture)
         compiler = compilers.select_compiler(input, state, output)
 
-        compiler_configuration = select_configuration(compiler, input, state)
+        compiler_configuration = BuildConfiguration.select_configuration(compiler, input, state)
 
         cmake = CMake(compiler.cmake_generator)
         cmake.install(platform.system(), (selected_architecture == "64"),
