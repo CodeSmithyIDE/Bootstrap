@@ -69,26 +69,21 @@ def main_bootstrap_build(args, input, state, output):
 
     try_restore_previous_state(input, state)
 
-    selected_architecture = select_architecture(input, state, output)
-
-    Path("Build").mkdir(exist_ok=True)
-
     try:
+        selected_architecture = select_architecture(input, state, output)
+
+        Path("Build").mkdir(exist_ok=True)
+
         dependencies = Dependencies()
         dependencies.check(output)
 
         projects = Projects()
 
         projects.set_environment_variables(output)
-    except RuntimeError as error:
-        print("")
-        print("ERROR:", error)
-        sys.exit(-1)
 
-    download_source_packages(projects, args.skip_downloads, input,
-                             state, output)
+        download_source_packages(projects, args.skip_downloads, input, state,
+                                 output)
 
-    try:
         compilers = Compilers(selected_architecture)
         compiler = compilers.select_compiler(input, state, output)
 
