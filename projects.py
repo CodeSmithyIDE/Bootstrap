@@ -72,9 +72,7 @@ class Project:
         else:
             downloader.unzip(split_name[1])
 
-    def build(self, cmake_configuration,
-              build_tools, build_configuration,
-              codesmithymake_configuration,
+    def build(self, build_tools, build_configuration,
               input, output):
         try:
             if self.makefile_path is None:
@@ -89,11 +87,13 @@ class Project:
                 if self.use_codesmithy_make:
                     print("    Using CodeSmithyMake")
                     codesmithymake.build(compiler, resolved_makefile_path,
-                                         codesmithymake_configuration, input)
+                                         build_configuration.codesmithymake_configuration,
+                                         input)
                 elif self.makefile_path.endswith("/CMakeLists.txt"):
                     log = self.name + "_build.log"
                     print("    Using CMake, build log: " + log)
-                    cmake.compile(resolved_makefile_path, cmake_configuration,
+                    cmake.compile(resolved_makefile_path,
+                                  build_configuration.cmake_configuration,
                                   log)
                 else:
                     print("    Using " + compiler.name)
@@ -285,9 +285,7 @@ class Projects:
     def download(self):
         self.downloader.download()
 
-    def build(self, cmake_configuration,
-              build_tools, build_configuration,
-              codesmithymake_configuration,
+    def build(self, build_tools, build_configuration,
               input, state, output):
         # For now only bypass pugixml, libgit2 and wxWidgets because they
         # are independent from the rest. More complex logic is required to
@@ -306,9 +304,7 @@ class Projects:
                 print("    Using previous execution")
             else:
                 project.unzip(self.downloader)
-                project.build(cmake_configuration,
-                              build_tools, build_configuration,
-                              codesmithymake_configuration,
+                project.build(build_tools, build_configuration,
                               input, output)
             state.set_built_project(project.name)
             output.next_step()

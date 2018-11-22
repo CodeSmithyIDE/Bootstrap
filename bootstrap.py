@@ -126,11 +126,11 @@ def main_bootstrap_build(args, input, state, output):
             compiler_configuration += "Win32"
             codesmithymake_configuration += "x86"
 
-        build_configuration = BuildConfiguration(compiler_configuration)
+        build_configuration = BuildConfiguration(cmake_configuration,
+                                                 compiler_configuration,
+                                                 codesmithymake_configuration)
 
-        projects.build(cmake_configuration,
-                       build_tools, build_configuration,
-                       codesmithymake_configuration,
+        projects.build(build_tools, build_configuration,
                        input, state, output)
 
         print("")
