@@ -13,7 +13,7 @@ class Project:
                  name: str,
                  env_var: str,
                  makefile_path: Optional[str],
-                 use_codesmithy_make):
+                 use_codesmithy_make: bool):
         """
         Parameters
         ----------
@@ -23,10 +23,12 @@ class Project:
         env_var: str
             The name of the environment variable that will point to the
             location of this project. The location is derived from the name.
-        makefile_path : str, optional
+        makefile_path: str, optional
             The path of the makefile used to build the project. The path is
             relative to the directory where the project is unzipped. None if
             the project only needs to be downloaded.
+        use_codesmithy_make: bool
+            Whether CodeSmithyMake should be used to build the project.
         """
 
         self.name = name

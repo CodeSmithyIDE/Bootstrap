@@ -13,8 +13,7 @@ from projects import Projects
 from cmake import CMake
 from compilers import Compilers
 from codesmithymake import CodeSmithyMake
-from build import BuildTools
-from build import BuildConfiguration
+from build import BuildTools, BuildConfiguration 
 from utils import Utils
 
 
