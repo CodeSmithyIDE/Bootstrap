@@ -115,20 +115,8 @@ def main_bootstrap_build(args, input, state, output):
 
         build_tools = BuildTools(cmake, compiler, codesmithymake)
         
-        cmake_configuration = compiler_configuration
-        
-        compiler_configuration += "|"
-        codesmithymake_configuration = "Microsoft Windows "
-        if selected_architecture == "64":
-            compiler_configuration += "x64"
-            codesmithymake_configuration += "x86_64"
-        else:
-            compiler_configuration += "Win32"
-            codesmithymake_configuration += "x86"
-
-        build_configuration = BuildConfiguration(cmake_configuration,
-                                                 compiler_configuration,
-                                                 codesmithymake_configuration)
+        build_configuration = BuildConfiguration(selected_architecture,
+                                                 compiler_configuration)
 
         projects.build(build_tools, build_configuration,
                        input, state, output)
