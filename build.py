@@ -1,4 +1,3 @@
-from enum import Enum
 from compilers import VisualStudio
 
 class BuildTools:
@@ -9,10 +8,6 @@ class BuildTools:
 
 
 class BuildConfiguration:
-    class VisualStudioConfigurationType(Enum):
-        DEBUG = 1
-        RELEASE = 2
-
     def select_configuration(self, architecture, compiler, input, state):
         compiler_configuration = self._select_compiler_configuration(compiler, input, state)
         self.cmake_configuration = compiler_configuration
