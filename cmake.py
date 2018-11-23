@@ -5,12 +5,25 @@ import shutil
 from pathlib import Path
 
 class CMake:
+    """Wrapper used to invoke CMake."""
+
     def __init__(self, generator):
         self.generator = generator
 
-    def install(self, platform_name, is64bit, state, output):
-        # CMake is not easily buildable on Windows so we rely on a binary
-        # distribution
+    def install(self, platform_name: str, is64bit: bool, state, output):
+        """Installs CMake.
+
+        CMake is not easily buildable on Windows so we rely on a binary
+        distribution
+
+        Parameters
+        ----------
+        platform_name : str
+            The name of the platform. Used to detect whether we are running on
+            Windows.
+        is64bit: bool
+            Whether to installed the 64-bit or 32-bit version CMake.
+        """
         print("")
         output.print_step_title("Installing CMake")
         if state.cmake_path == "":
