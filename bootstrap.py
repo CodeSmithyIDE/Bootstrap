@@ -64,12 +64,12 @@ def select_architecture(input, state, output):
 
 
 def main_bootstrap_build(args, input, state, output):
-    print("")
-    output.print_main_title()
-
-    try_restore_previous_state(input, state)
-
     try:
+        print("")
+        output.print_main_title()
+
+        try_restore_previous_state(input, state)
+    
         selected_architecture = select_architecture(input, state, output)
 
         Path("Build").mkdir(exist_ok=True)
