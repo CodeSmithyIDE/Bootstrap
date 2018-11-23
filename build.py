@@ -15,10 +15,12 @@ class BuildConfiguration:
     def __init__(self, build_configuration = None):
         if build_configuration is None:
             self.cmake_configuration = ""
+            self.cmake_generation_args = []
             self.compiler_configuration = ""
             self.codesmithymake_configuration = ""
         else:
             self.cmake_configuration = build_configuration.cmake_configuration
+            self.cmake_generation_args = build_configuration.cmake_generation_args.copy()
             self.compiler_configuration = build_configuration.compiler_configuration
             self.codesmithymake_configuration = build_configuration.codesmithymake_configuration
 

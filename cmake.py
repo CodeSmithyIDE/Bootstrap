@@ -3,6 +3,9 @@ import zipfile
 import subprocess
 import shutil
 from pathlib import Path
+from state import State
+from output import Output
+from build import BuildConfiguration
 
 class CMake:
     """Wrapper used to invoke CMake."""
@@ -10,7 +13,8 @@ class CMake:
     def __init__(self, generator):
         self.generator = generator
 
-    def install(self, platform_name: str, is64bit: bool, state, output):
+    def install(self, platform_name: str, is64bit: bool, state: State,
+                output: Output):
         """Installs CMake.
 
         CMake is not easily buildable on Windows so we rely on a binary
@@ -23,6 +27,10 @@ class CMake:
             Windows.
         is64bit: bool
             Whether to installed the 64-bit or 32-bit version CMake.
+        state: State
+            The state of the bootstrap build.
+        output: Output
+            The output helper.
         """
         print("")
         output.print_step_title("Installing CMake")
@@ -35,30 +43,35 @@ class CMake:
         state.set_cmake_path(self.path)
         output.next_step()
 
-    def build(self, makefile_path: str, build_configuration, logfile):
+    def build(self, makefile_path: str,
+              build_configuration: BuildConfiguration,
+              logfile: str):
         """Generate the makefiles and then use them to build the project.
 
         Parameters
         ----------
         makefile_path : str
             Path to the makefile. It should be the CMakeLists.txt.
+        build_configuration: BuildConfiguration
+            The build configuration.
+        logfile: str
+            The path to the file where the output of CMake will be written.
         """
         previous_working_dir = os.getcwd()
         os.chdir(Path(makefile_path).parent)
         try:
             with open(logfile, "w") as output_file:
+                cmake_path = previous_working_dir + "/" + self.path
+                generation_args = [cmake_path, "-G", self.generator, "."]
                 # TODO
                 if makefile_path.find("libgit2") != -1:
-                    subprocess.check_call(
-                        [previous_working_dir + "/" + self.path, "-G", self.generator, ".", "-DBUILD_SHARED_LIBS=OFF", "-DSTATIC_CRT=OFF"],
-                        stdout=output_file)
-                else:
-                    subprocess.check_call(
-                        [previous_working_dir + "/" + self.path, "-G", self.generator, "."],
-                        stdout=output_file)
-                subprocess.check_call(
-                    [previous_working_dir + "/" + self.path, "--build", ".", "--config", build_configuration.cmake_configuration],
-                    stdout=output_file)
+                    generation_args.extend(["-DBUILD_SHARED_LIBS=OFF", "-DSTATIC_CRT=OFF"])
+                print("    Executing " + " ".join(generation_args))
+                subprocess.check_call(generation_args, stdout=output_file)
+                build_args = [cmake_path, "--build", ".", "--config",
+                              build_configuration.cmake_configuration]
+                print("    Executing " + " ".join(build_args))
+                subprocess.check_call(build_args, stdout=output_file)
         except subprocess.CalledProcessError:
             raise RuntimeError("Compilation of " + makefile_path + " failed.")
         finally:
