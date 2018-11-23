@@ -35,7 +35,14 @@ class CMake:
         state.set_cmake_path(self.path)
         output.next_step()
 
-    def compile(self, makefile_path, configuration, logfile):
+    def build(self, makefile_path: str, build_configuration, logfile):
+        """Generate the makefiles and then use them to build the project.
+
+        Parameters
+        ----------
+        makefile_path : str
+            Path to the makefile. It should be the CMakeLists.txt.
+        """
         previous_working_dir = os.getcwd()
         os.chdir(Path(makefile_path).parent)
         try:
@@ -50,7 +57,7 @@ class CMake:
                         [previous_working_dir + "/" + self.path, "-G", self.generator, "."],
                         stdout=output_file)
                 subprocess.check_call(
-                    [previous_working_dir + "/" + self.path, "--build", ".", "--config", configuration],
+                    [previous_working_dir + "/" + self.path, "--build", ".", "--config", build_configuration.cmake_configuration],
                     stdout=output_file)
         except subprocess.CalledProcessError:
             raise RuntimeError("Compilation of " + makefile_path + " failed.")

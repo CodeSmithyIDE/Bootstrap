@@ -1,6 +1,8 @@
 from compilers import VisualStudio
 
 class BuildTools:
+    """Provides a way to group all the available build tools in one place."""
+
     def __init__(self, cmake, compiler, codesmithymake):
         self.cmake = cmake
         self.compiler = compiler
@@ -8,6 +10,18 @@ class BuildTools:
 
 
 class BuildConfiguration:
+    """Unified configuration information for the build tools."""
+    
+    def __init__(self, build_configuration = None):
+        if build_configuration is None:
+            self.cmake_configuration = ""
+            self.compiler_configuration = ""
+            self.codesmithymake_configuration = ""
+        else:
+            self.cmake_configuration = build_configuration.cmake_configuration
+            self.compiler_configuration = build_configuration.compiler_configuration
+            self.codesmithymake_configuration = build_configuration.codesmithymake_configuration
+
     def select_configuration(self, architecture, compiler, input, state):
         compiler_configuration = self._select_compiler_configuration(compiler, input, state)
         self.cmake_configuration = compiler_configuration

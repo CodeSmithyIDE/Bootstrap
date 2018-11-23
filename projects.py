@@ -94,9 +94,8 @@ class Project:
                 elif self.makefile_path.endswith("/CMakeLists.txt"):
                     log = self.name + "_build.log"
                     print("    Using CMake, build log: " + log)
-                    cmake.compile(resolved_makefile_path,
-                                  build_configuration.cmake_configuration,
-                                  log)
+                    cmake.build(resolved_makefile_path, build_configuration,
+                                log)
                 else:
                     print("    Using " + compiler.name)
                     compiler.compile(resolved_makefile_path,
