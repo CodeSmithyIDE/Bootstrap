@@ -4,7 +4,9 @@ import re
 import subprocess
 from download import Downloader
 from download import Download
-from build import BuildConfiguration
+from input import Input
+from output import Output
+from build import BuildTools, BuildConfiguration
 
 
 class Project:
@@ -39,6 +41,7 @@ class Project:
         else:
             self.makefile_path = "Build/" + name + "/" + makefile_path
         self.use_codesmithy_make = use_codesmithy_make
+        self.cmake_generation_args = []
 
         split_name = name.split("/")
 
@@ -77,15 +80,28 @@ class Project:
 
         return downloader
 
-    def unzip(self, downloader):
+    def unzip(self, downloader: Downloader):
+        """Unzips the package(s) for this project.
+
+        In the Project class there is only one package but derived classes can
+        specify more than one package to unzip.
+
+        Parameters
+        ----------
+        downloader : Downloader
+            The downloader that was used to download the package(s).
+        """
+
         split_name = self.name.split("/")
         if len(split_name) == 1:
             downloader.unzip(split_name[0])
         else:
             downloader.unzip(split_name[1])
 
-    def build(self, build_tools, parent_build_configuration,
-              input, output):
+    def build(self, build_tools: BuildTools,
+              parent_build_configuration: BuildConfiguration,
+              input: Input,
+              output: Output):
         try:
             if self.makefile_path is None:
                 print("    No build required for this project")
@@ -94,6 +110,7 @@ class Project:
                 compiler = build_tools.compiler
                 codesmithymake = build_tools.codesmithymake
                 build_configuration = BuildConfiguration(parent_build_configuration)
+                build_configuration.cmake_generation_args.extend(self.cmake_generation_args)
                 resolved_makefile_path = self._resolve_makefile_path(compiler)
                 if not os.path.exists(resolved_makefile_path):
                     raise RuntimeError(resolved_makefile_path + " not found")
@@ -187,11 +204,14 @@ class Projects:
             "PUGIXML",
             None,
             False))
-        self.projects.append(Project(
+        libgit2_project = Project(
             "libgit2",
             "LIBGIT2",
             "CMakeLists.txt",
-            False))
+            False)
+        libgit2_project.cmake_generation_args = ["-DBUILD_SHARED_LIBS=OFF",
+                                                 "-DSTATIC_CRT=OFF"]
+        self.projects.append(libgit2_project)
         self.projects.append(Project(
             "Ishiko/Process",
             "ISHIKO",
