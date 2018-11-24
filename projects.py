@@ -4,6 +4,7 @@ import re
 import subprocess
 from download import Downloader
 from download import Download
+from build import BuildConfiguration
 
 
 class Project:
@@ -49,7 +50,16 @@ class Project:
 
         self.built = False
 
-    def create_downloader(self):
+    def create_downloader(self) -> Downloader:
+        """Creates a downloader to download the package(s) for this project.
+
+        Returns
+        -------
+        Downloader
+            An instance of the Downloader class that can be used to download the
+            package or packages for this project.
+        """
+
         downloader = Downloader()
 
         # The download URL is derived from the project name
@@ -74,7 +84,7 @@ class Project:
         else:
             downloader.unzip(split_name[1])
 
-    def build(self, build_tools, build_configuration,
+    def build(self, build_tools, parent_build_configuration,
               input, output):
         try:
             if self.makefile_path is None:
@@ -83,6 +93,7 @@ class Project:
                 cmake = build_tools.cmake
                 compiler = build_tools.compiler
                 codesmithymake = build_tools.codesmithymake
+                build_configuration = BuildConfiguration(parent_build_configuration)
                 resolved_makefile_path = self._resolve_makefile_path(compiler)
                 if not os.path.exists(resolved_makefile_path):
                     raise RuntimeError(resolved_makefile_path + " not found")

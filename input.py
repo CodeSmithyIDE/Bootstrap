@@ -4,7 +4,8 @@ from typing import List
 class Input:
     """Provides functions to get user input."""
 
-    def query(self, question: str, valid_answers: List[str], default: str):
+    def query(self, question: str, valid_answers: List[str],
+              default: str) -> str:
         """Prints the text provided and awaits a response from the user.
 
         The answer given by the user must match one of the answers in the
