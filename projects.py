@@ -102,6 +102,22 @@ class Project:
               parent_build_configuration: BuildConfiguration,
               input: Input,
               output: Output):
+        """Builds the project.
+
+        Parameters
+        ----------
+        build_tools: BuildTools
+            The build tools. An appropriate build tool will be selected based
+            on the type of the project.
+        parent_build_configuration: BuildConfiguration
+            The parent build configuration. This may be further modified if the
+            project has specific settings.
+        input: Input
+            The input helper.
+        output: Output
+            The output helper.
+        """
+
         try:
             if self.makefile_path is None:
                 print("    No build required for this project")

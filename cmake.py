@@ -63,9 +63,7 @@ class CMake:
             with open(logfile, "w") as output_file:
                 cmake_path = previous_working_dir + "/" + self.path
                 generation_args = [cmake_path, "-G", self.generator, "."]
-                # TODO
-                if makefile_path.find("libgit2") != -1:
-                    generation_args.extend(["-DBUILD_SHARED_LIBS=OFF", "-DSTATIC_CRT=OFF"])
+                generation_args.extend(build_configuration.cmake_generation_args)
                 print("    Executing " + " ".join(generation_args))
                 subprocess.check_call(generation_args, stdout=output_file)
                 build_args = [cmake_path, "--build", ".", "--config",
