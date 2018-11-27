@@ -2,6 +2,8 @@ import argparse
 
 
 class ArgParser:
+    """Command line parser."""
+
     def __init__(self):
         self.arg_parser = argparse.ArgumentParser(
             description='Do a bootstrap build of CodeSmithy.')
@@ -20,4 +22,10 @@ class ArgParser:
             help='skip the tests')
 
     def parse(self):
+        """Parse the command line.
+
+        Returns
+        -------
+        TODO
+        """
         return self.arg_parser.parse_args()

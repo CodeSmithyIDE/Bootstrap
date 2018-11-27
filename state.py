@@ -2,6 +2,8 @@ import json
 
 
 class State:
+    """Stores information about the state of the bootstrap procedure."""
+
     def __init__(self):
         self.reset_variables()
         try:
