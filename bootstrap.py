@@ -129,9 +129,11 @@ def main_launch_project(args, input, state, output):
     projects = Projects()
 
     # TODO: restore state
-    # TODO: this is broken, an argument is missing
-    compilers = Compilers()
-    compiler = select_compiler(compilers, input, state, output)
+
+    selected_architecture = select_architecture(input, state, output)
+    
+    compilers = Compilers(selected_architecture)
+    compiler = compilers.select_compiler(input, state, output)
 
     projects.get(args.launch).launch(compiler)
 

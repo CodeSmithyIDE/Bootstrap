@@ -21,11 +21,12 @@ class ArgParser:
             '--skip-tests', action='store_true',
             help='skip the tests')
 
-    def parse(self):
+    def parse(self) -> argparse.Namespace:
         """Parse the command line.
 
         Returns
         -------
-        TODO
+        argparse.Namespace
+            A namespace instanced populated with the arguments.
         """
         return self.arg_parser.parse_args()
