@@ -139,7 +139,7 @@ def main_launch_project(args, input, state, output):
 def main():
     args = ArgParser().parse()
 
-    input = Input()
+    input = Input(not args.non_interactive)
     output = Output()
     state = State()
 

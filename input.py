@@ -4,6 +4,9 @@ from typing import List
 class Input:
     """Provides functions to get user input."""
 
+    def __init__(self, interactive):
+        self.interactive = interactive
+
     def query(self, question: str, valid_answers: List[str],
               default: str) -> str:
         """Prints the text provided and awaits a response from the user.
@@ -39,13 +42,18 @@ class Input:
         """
         question += self._formatted_answers(valid_answers, default)
         user_answer = None
-        while user_answer is None:
-            user_input = input(question)
-            if user_input == "":
-                user_answer = default
-                break
-            else:
-                user_answer = self._lowercase_find(valid_answers, user_input)
+        if self.interactive:
+            while user_answer is None:
+                user_input = input(question)
+                if user_input == "":
+                    user_answer = default
+                    break
+                else:
+                    user_answer = self._lowercase_find(valid_answers,
+                                                       user_input)
+        else:
+            print(question + default)
+            user_answer = default
         return user_answer
 
     def _formatted_answers(self, valid_answers, default):
