@@ -107,7 +107,7 @@ def main_bootstrap_build(args, input, state, output):
         if args.skip_tests:
             print("    Skipping tests")
         else:
-            projects.test()
+            projects.test(compiler, input)
         output.next_step()
 
         print("")

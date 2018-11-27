@@ -211,6 +211,12 @@ class wxWidgetsProject(Project):
                       self.makefile_path)
 
 
+class Test:
+    def __init__(self, project_name, executable):
+        self.project_name = project_name
+        self.executable = executable
+
+
 class Projects:
     def __init__(self):
         self.downloader = Downloader()
@@ -300,8 +306,8 @@ class Projects:
             "Makefiles/$(compiler_short_name)/CodeSmithyUICoreTests.sln",
             True))
         self.tests = []
-        # TODO
-        self.tests.append("Build/CodeSmithyIDE/CodeSmithy/Tests/Core/Makefiles/VC15/x64/Debug/CodeSmithyCoreTests")
+        self.tests.append(Test("CodeSmithyIDE/CodeSmithy/Tests/Core",
+                               "CodeSmithyCoreTests.exe"))
         self._init_downloader()
 
     def get(self, name):
@@ -358,10 +364,17 @@ class Projects:
             output.next_step()
         state.set_build_complete()
 
-    def test(self):
+    def test(self, compiler, input):
         for test in self.tests:
             # TODO
-            subprocess.check_call([test])
+            executable_path = "Build/" + test.project_name + "/Makefiles/VC15/x64/Debug/" + test.executable
+            try:
+                subprocess.check_call([executable_path])
+            except subprocess.CalledProcessError:
+                launchIDE = input.query("    Tests failed. Do you you want to launch the IDE?", ["y", "n"], "n")
+                if launchIDE == "y":
+                    self.get(test.project_name).launch(compiler)
+                raise RuntimeError(test.project_name+ " tests failed.")
 
     def _init_downloader(self):
         for project in self.projects:
