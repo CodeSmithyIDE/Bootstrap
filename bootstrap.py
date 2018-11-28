@@ -17,11 +17,11 @@ from build import BuildTools, BuildConfiguration
 from utils import Utils
 
 
-def try_restore_previous_state(input, state):
+def try_restore_previous_state(input, default, state):
     if state.previous_state_found:
         resume = input.query(
             "Previous execution detected. Do you want to resume it?",
-            ["y", "n"], "n")
+            ["y", "n"], default)
         if resume == "n":
             state.reset()
             Utils.rmdir_with_retry("Build", input)
@@ -68,7 +68,7 @@ def main_bootstrap_build(args, input, state, output):
         print("")
         output.print_main_title()
 
-        try_restore_previous_state(input, state)
+        try_restore_previous_state(input, "n", state)
     
         selected_architecture = select_architecture(input, state, output)
 
@@ -128,9 +128,11 @@ def main_bootstrap_build(args, input, state, output):
 def main_launch_project(args, input, state, output):
     projects = Projects()
 
-    # TODO: restore state
+    try_restore_previous_state(input, "y", state)
 
-    selected_architecture = select_architecture(input, state, output)
+    # It is not possible to instruct Visual Studio to start with a specific
+    # configuration so we do not ask the user and randomly specify "x64"
+    selected_architecture = "x64"
     
     compilers = Compilers(selected_architecture)
     compiler = compilers.select_compiler(input, state, output)
