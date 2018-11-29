@@ -59,8 +59,8 @@ class Project:
         Returns
         -------
         Downloader
-            An instance of the Downloader class that can be used to download the
-            package or packages for this project.
+            An instance of the Downloader class that can be used to download
+            the package or packages for this project.
         """
 
         downloader = Downloader()
@@ -167,25 +167,26 @@ class wxWidgetsProject(Project):
 
     def create_downloader(self):
         downloader = super().create_downloader()
+        url_prefix = "https://github.com/CodeSmithyIDE/"
         downloader.downloads.append(
             Download("zlib",
-                     "https://github.com/CodeSmithyIDE/zlib/archive/wx.zip",
+                     url_prefix + "zlib/archive/wx.zip",
                      None, "wx", "Build/wxWidgets/src"))
         downloader.downloads.append(
             Download("libpng",
-                     "https://github.com/CodeSmithyIDE/libpng/archive/wx.zip",
+                     url_prefix + "libpng/archive/wx.zip",
                      None, "wx", "Build/wxWidgets/src"))
         downloader.downloads.append(
             Download("libexpat",
-                     "https://github.com/CodeSmithyIDE/libexpat/archive/wx.zip",
+                     url_prefix + "libexpat/archive/wx.zip",
                      None, "wx", "Build/wxWidgets/src"))
         downloader.downloads.append(
             Download("libjpeg-turbo",
-                     "https://github.com/CodeSmithyIDE/libjpeg-turbo/archive/wx.zip",
+                     url_prefix + "libjpeg-turbo/archive/wx.zip",
                      None, "wx", "Build/wxWidgets/src"))
         downloader.downloads.append(
             Download("libtiff",
-                     "https://github.com/CodeSmithyIDE/libtiff/archive/wx.zip",
+                     url_prefix + "libtiff/archive/wx.zip",
                      None, "wx", "Build/wxWidgets/src"))
         return downloader
 
@@ -200,7 +201,8 @@ class wxWidgetsProject(Project):
         os.rename("Build/wxWidgets/src/libexpat", "Build/wxWidgets/src/expat")
         downloader.unzip("libjpeg-turbo")
         os.rmdir("Build/wxWidgets/src/jpeg")
-        os.rename("Build/wxWidgets/src/libjpeg-turbo", "Build/wxWidgets/src/jpeg")
+        os.rename("Build/wxWidgets/src/libjpeg-turbo",
+                  "Build/wxWidgets/src/jpeg")
         downloader.unzip("libtiff")
         os.rmdir("Build/wxWidgets/src/tiff")
         os.rename("Build/wxWidgets/src/libtiff", "Build/wxWidgets/src/tiff")
@@ -367,14 +369,16 @@ class Projects:
     def test(self, compiler, input):
         for test in self.tests:
             # TODO
-            executable_path = "Build/" + test.project_name + "/Makefiles/VC15/x64/Debug/" + test.executable
+            executable_path = "Build/" + test.project_name + \
+                              "/Makefiles/VC15/x64/Debug/" + test.executable
             try:
                 subprocess.check_call([executable_path])
             except subprocess.CalledProcessError:
-                launchIDE = input.query("    Tests failed. Do you you want to launch the IDE?", ["y", "n"], "n")
+                launchIDE = input.query("    Tests failed. Do you you want to"
+                                        " launch the IDE?", ["y", "n"], "n")
                 if launchIDE == "y":
                     self.get(test.project_name).launch(compiler)
-                raise RuntimeError(test.project_name+ " tests failed.")
+                raise RuntimeError(test.project_name + " tests failed.")
 
     def _init_downloader(self):
         for project in self.projects:
