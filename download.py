@@ -14,7 +14,7 @@ class Download:
 
         self.download_path = "Downloads/"
         if subdir is not None:
-            self.download_path += subdir + "/"        
+            self.download_path += subdir + "/"
         self.download_path += self.name + "-" + self.branch + ".zip"
 
         if extract_path_prefix is not None:
@@ -38,13 +38,13 @@ class Download:
             print("    Unzipping " + self.download_path, flush=True)
             shutil.rmtree(self.extract_path_prefix + "/" + self.name,
                           ignore_errors=True)
-            shutil.rmtree(self.extract_path_prefix + "/" + self.name + "-" + self.branch,
-                          ignore_errors=True)
+            shutil.rmtree(self.extract_path_prefix + "/" + self.name + "-" +
+                          self.branch, ignore_errors=True)
             zip_ref = zipfile.ZipFile(self.download_path, "r")
             zip_ref.extractall(self.extract_path_prefix)
             zip_ref.close()
-            os.rename(self.extract_path_prefix + "/" + self.name + "-" + self.branch,
-                      self.extract_path_prefix + "/" + self.name)
+            os.rename(self.extract_path_prefix + "/" + self.name + "-" +
+                      self.branch, self.extract_path_prefix + "/" + self.name)
         else:
             print("    " + self.download_path + " already unzipped",
                   flush=True)

@@ -17,7 +17,7 @@ class Output:
         print("")
 
     def print_step_title(self, title):
-        print("Step " + str(self.current_step )+ ": " + title, flush=True)
+        print("Step " + str(self.current_step) + ": " + title, flush=True)
 
     def next_step(self):
         self.current_step += 1

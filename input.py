@@ -76,4 +76,3 @@ class Input:
                 user_answer = valid_answer
                 break
         return user_answer
-                
