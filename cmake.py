@@ -7,6 +7,7 @@ from state import State
 from output import Output
 from build import BuildConfiguration
 
+
 class CMake:
     """Wrapper used to invoke CMake."""
 
@@ -78,12 +79,17 @@ class CMake:
     def _install(self, platform_name, is64bit):
         self.path = ""
         if platform_name == "Windows":
+            architecture_string = ""
             if is64bit:
-                zip_ref = zipfile.ZipFile("CMake/cmake-3.12.3-win64-x64.zip", "r")
-                self.path = "Build/cmake-3.12.3-win64-x64/bin/cmake.exe"
+                architecture_string = "-win64-x64"
             else:
-                zip_ref = zipfile.ZipFile("CMake/cmake-3.12.3-win32-x86.zip", "r")
-                self.path = "Build/cmake-3.12.3-win32-x86/bin/cmake.exe"
+                architecture_string = "-win32-x86"
+            source_path = "CMake/cmake-3.12.3" + architecture_string + ".zip"
+            zip_ref = zipfile.ZipFile(source_path, "r")
+            self.path = "Build/cmake-3.12.3" + architecture_string + \
+                        "/bin/cmake.exe"
+
+            # TODO : the path we delete here doesn't seem right
             shutil.rmtree(self.path, ignore_errors=True)
             zip_ref.extractall("Build")
             zip_ref.close()
