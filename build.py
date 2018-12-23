@@ -18,20 +18,23 @@ class BuildConfiguration:
             self.cmake_generation_args = []
             self.compiler_configuration = ""
             self.codesmithymake_configuration = ""
+            self.architecture_dir_name = ""
         else:
             self.cmake_configuration = build_configuration.cmake_configuration
             self.cmake_generation_args = build_configuration.cmake_generation_args.copy()
             self.compiler_configuration = build_configuration.compiler_configuration
             self.codesmithymake_configuration = build_configuration.codesmithymake_configuration
+            self.architecture_dir_name = build_configuration.architecture_dir_name
 
     def select_configuration(self, architecture, compiler, input, state):
         compiler_configuration = self._select_compiler_configuration(compiler, input, state)
         self.cmake_configuration = compiler_configuration
         self.compiler_configuration = compiler_configuration + "|"
         if architecture == "64":
-            self.compiler_configuration += "x64"
+            self.architecture_dir_name = "x64"
         else:
-            self.compiler_configuration += "Win32"
+            self.architecture_dir_name = "Win32"
+        self.compiler_configuration += self.architecture_dir_name
         self.codesmithymake_configuration = "Microsoft Windows "
         if architecture == "64":
             self.codesmithymake_configuration += "x86_64"

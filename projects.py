@@ -2,6 +2,7 @@ from typing import Optional
 import os
 import re
 import subprocess
+from pathlib import Path
 from download import Downloader
 from download import Download
 from input import Input
@@ -23,14 +24,14 @@ class Project:
         name : str
             The name of the project. The location of the package to download is
             derived from the name.
-        env_var: str
+        env_var : str
             The name of the environment variable that will point to the
             location of this project. The location is derived from the name.
-        makefile_path: str, optional
+        makefile_path : str, optional
             The path of the makefile used to build the project. The path is
             relative to the directory where the project is unzipped. None if
             the project only needs to be downloaded.
-        use_codesmithy_make: bool
+        use_codesmithy_make : bool
             Whether CodeSmithyMake should be used to build the project.
         """
 
@@ -106,15 +107,15 @@ class Project:
 
         Parameters
         ----------
-        build_tools: BuildTools
+        build_tools : BuildTools
             The build tools. An appropriate build tool will be selected based
             on the type of the project.
-        parent_build_configuration: BuildConfiguration
+        parent_build_configuration : BuildConfiguration
             The parent build configuration. This may be further modified if the
             project has specific settings.
-        input: Input
+        input : Input
             The input helper.
-        output: Output
+        output : Output
             The output helper.
         """
 
@@ -127,7 +128,7 @@ class Project:
                 codesmithymake = build_tools.codesmithymake
                 build_configuration = BuildConfiguration(parent_build_configuration)
                 build_configuration.cmake_generation_args.extend(self.cmake_generation_args)
-                resolved_makefile_path = self._resolve_makefile_path(compiler)
+                resolved_makefile_path = self._resolve_makefile_path(compiler, build_configuration.architecture_dir_name)
                 if not os.path.exists(resolved_makefile_path):
                     raise RuntimeError(resolved_makefile_path + " not found")
                 if self.use_codesmithy_make:
@@ -154,17 +155,27 @@ class Project:
     def launch(self, compiler):
         compiler.launch(self._resolve_makefile_path(compiler))
 
-    def _resolve_makefile_path(self, compiler):
-        return re.sub(r"\$\(compiler_short_name\)",
-                      compiler.short_name,
-                      self.makefile_path)
+    def _resolve_makefile_path(self, compiler, architecture_dir_name):
+        result = re.sub(r"\$\(compiler_short_name\)",
+                        compiler.short_name,
+                        self.makefile_path)
+        result = re.sub(r"\$\(arch\)",
+                        architecture_dir_name,
+                        result)
+        return result
 
 
 class libgit2Project(Project):
     def __init__(self):
-        super().__init__("libgit2", "LIBGIT2", "CMakeLists.txt", False)
+        super().__init__("libgit2", "LIBGIT2", "$(arch)/CMakeLists.txt", False)
         self.cmake_generation_args = ["-DBUILD_SHARED_LIBS=OFF",
                                       "-DSTATIC_CRT=OFF"]
+
+    def unzip(self, downloader):
+        # TODO : just do the normal unzip on Linux
+        Path("Build/libgit2").mkdir(exist_ok=True)
+        downloader.unzip("libgit2",
+                         ["Build/libgit2/Win32", "Build/libgit2/x64"])
 
 class wxWidgetsProject(Project):
     def __init__(self):
@@ -177,23 +188,23 @@ class wxWidgetsProject(Project):
         downloader.downloads.append(
             Download("zlib",
                      url_prefix + "zlib/archive/wx.zip",
-                     None, "wx", "Build/wxWidgets/src"))
+                     None, "wx", "Build/wxWidgets/src/"))
         downloader.downloads.append(
             Download("libpng",
                      url_prefix + "libpng/archive/wx.zip",
-                     None, "wx", "Build/wxWidgets/src"))
+                     None, "wx", "Build/wxWidgets/src/"))
         downloader.downloads.append(
             Download("libexpat",
                      url_prefix + "libexpat/archive/wx.zip",
-                     None, "wx", "Build/wxWidgets/src"))
+                     None, "wx", "Build/wxWidgets/src/"))
         downloader.downloads.append(
             Download("libjpeg-turbo",
                      url_prefix + "libjpeg-turbo/archive/wx.zip",
-                     None, "wx", "Build/wxWidgets/src"))
+                     None, "wx", "Build/wxWidgets/src/"))
         downloader.downloads.append(
             Download("libtiff",
                      url_prefix + "libtiff/archive/wx.zip",
-                     None, "wx", "Build/wxWidgets/src"))
+                     None, "wx", "Build/wxWidgets/src/"))
         return downloader
 
     def unzip(self, downloader):
@@ -213,7 +224,7 @@ class wxWidgetsProject(Project):
         os.rmdir("Build/wxWidgets/src/tiff")
         os.rename("Build/wxWidgets/src/libtiff", "Build/wxWidgets/src/tiff")
 
-    def _resolve_makefile_path(self, compiler):
+    def _resolve_makefile_path(self, compiler, architecture_dir_name):
         return re.sub(r"\$\(compiler_short_name\)",
                       compiler.short_name.lower(),
                       self.makefile_path)

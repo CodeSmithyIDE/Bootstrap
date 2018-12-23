@@ -45,15 +45,15 @@ class Download:
         if not self.unzipped:
             print("    Unzipping " + self.download_path, flush=True)
             if destination_dirs is None:
-                destination_dirs = [self.extract_path_prefix + "/" + self.name]
-            destination_dir = destination_dirs[0]
-            temp_destination_dir = self.extract_path_prefix + "/" + self.name + "-" + self.branch
-            shutil.rmtree(destination_dir, ignore_errors=True)
-            shutil.rmtree(temp_destination_dir, ignore_errors=True)
-            zip_ref = zipfile.ZipFile(self.download_path, "r")
-            zip_ref.extractall(self.extract_path_prefix)
-            zip_ref.close()
-            os.rename(temp_destination_dir, destination_dir)
+                destination_dirs = [self.extract_path_prefix + self.name]
+            for destination_dir in destination_dirs:
+                temp_destination_dir = self.extract_path_prefix + self.name + "-" + self.branch
+                shutil.rmtree(destination_dir, ignore_errors=True)
+                shutil.rmtree(temp_destination_dir, ignore_errors=True)
+                zip_ref = zipfile.ZipFile(self.download_path, "r")
+                zip_ref.extractall(self.extract_path_prefix)
+                zip_ref.close()
+                os.rename(temp_destination_dir, destination_dir)
         else:
             print("    " + self.download_path + " already unzipped",
                   flush=True)
@@ -90,7 +90,7 @@ class Downloader:
         for download, i in zip(self.downloads, range(ord("a"), ord("z"))):
             download.download(chr(i))
 
-    def unzip(self, name):
+    def unzip(self, name, destination_dirs=None):
         for download in self.downloads:
             if download.name == name:
-                download.unzip()
+                download.unzip(destination_dirs)
