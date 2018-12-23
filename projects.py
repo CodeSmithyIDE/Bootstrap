@@ -160,6 +160,12 @@ class Project:
                       self.makefile_path)
 
 
+class libgit2Project(Project):
+    def __init__(self):
+        super().__init__("libgit2", "LIBGIT2", "CMakeLists.txt", False)
+        self.cmake_generation_args = ["-DBUILD_SHARED_LIBS=OFF",
+                                      "-DSTATIC_CRT=OFF"]
+
 class wxWidgetsProject(Project):
     def __init__(self):
         super().__init__("wxWidgets", "WXWIN",
@@ -228,14 +234,7 @@ class Projects:
             "PUGIXML",
             None,
             False))
-        libgit2_project = Project(
-            "libgit2",
-            "LIBGIT2",
-            "CMakeLists.txt",
-            False)
-        libgit2_project.cmake_generation_args = ["-DBUILD_SHARED_LIBS=OFF",
-                                                 "-DSTATIC_CRT=OFF"]
-        self.projects.append(libgit2_project)
+        self.projects.append(libgit2Project())
         self.projects.append(Project(
             "Ishiko/Process",
             "ISHIKO",
