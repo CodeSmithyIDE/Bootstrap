@@ -185,27 +185,13 @@ class wxWidgetsProject(Project):
 
     def create_downloader(self):
         downloader = super().create_downloader()
+        modules = ["zlib", "libpng", "libexpat", "libjpeg-turbo", "libtiff"]
         url_prefix = "https://github.com/CodeSmithyIDE/"
-        downloader.downloads.append(
-            Download("zlib",
-                     url_prefix + "zlib/archive/wx.zip",
-                     "Build/wxWidgets/src", "wx"))
-        downloader.downloads.append(
-            Download("libpng",
-                     url_prefix + "libpng/archive/wx.zip",
-                     "Build/wxWidgets/src", "wx"))
-        downloader.downloads.append(
-            Download("libexpat",
-                     url_prefix + "libexpat/archive/wx.zip",
-                     "Build/wxWidgets/src", "wx"))
-        downloader.downloads.append(
-            Download("libjpeg-turbo",
-                     url_prefix + "libjpeg-turbo/archive/wx.zip",
-                     "Build/wxWidgets/src", "wx"))
-        downloader.downloads.append(
-            Download("libtiff",
-                     url_prefix + "libtiff/archive/wx.zip",
-                     "Build/wxWidgets/src", "wx"))
+        url_suffix = "/archive/wx.zip"
+        for module in modules:
+            downloader.downloads.append(
+                Download(module, url_prefix + module + url_suffix,
+                         "Build/wxWidgets/src", "wx"))
         return downloader
 
     def unzip(self, downloader):
