@@ -72,11 +72,12 @@ class Project:
         if len(split_name) == 1:
             download_url = "https://github.com/CodeSmithyIDE/" + \
                            split_name[0] + "/archive/master.zip"
-            download = Download(split_name[0], download_url)
+            download = Download(split_name[0], download_url, "Build")
         else:
             download_url = "https://github.com/CodeSmithyIDE/" + \
                            split_name[1] + "/archive/master.zip"
-            download = Download(split_name[1], download_url, split_name[0])
+            download = Download(split_name[1], download_url,
+                                "Build/" + split_name[0])
         downloader.downloads.append(download)
 
         return downloader
@@ -188,23 +189,23 @@ class wxWidgetsProject(Project):
         downloader.downloads.append(
             Download("zlib",
                      url_prefix + "zlib/archive/wx.zip",
-                     None, "wx", "Build/wxWidgets/src/"))
+                     "Build/wxWidgets/src", "wx"))
         downloader.downloads.append(
             Download("libpng",
                      url_prefix + "libpng/archive/wx.zip",
-                     None, "wx", "Build/wxWidgets/src/"))
+                     "Build/wxWidgets/src", "wx"))
         downloader.downloads.append(
             Download("libexpat",
                      url_prefix + "libexpat/archive/wx.zip",
-                     None, "wx", "Build/wxWidgets/src/"))
+                     "Build/wxWidgets/src", "wx"))
         downloader.downloads.append(
             Download("libjpeg-turbo",
                      url_prefix + "libjpeg-turbo/archive/wx.zip",
-                     None, "wx", "Build/wxWidgets/src/"))
+                     "Build/wxWidgets/src", "wx"))
         downloader.downloads.append(
             Download("libtiff",
                      url_prefix + "libtiff/archive/wx.zip",
-                     None, "wx", "Build/wxWidgets/src/"))
+                     "Build/wxWidgets/src", "wx"))
         return downloader
 
     def unzip(self, downloader):

@@ -6,8 +6,7 @@ import zipfile
 
 
 class Download:
-    def __init__(self, name, url, subdir=None, branch="master",
-                 extract_path_prefix=None):
+    def __init__(self, name, url, extract_path, branch="master"):
         self.name = name
         self.url = url
         self.branch = branch
@@ -15,12 +14,7 @@ class Download:
         self.download_path = "Downloads/"
         self.download_path += self.name + "-" + self.branch + ".zip"
 
-        if extract_path_prefix is not None:
-            self.extract_path_prefix = extract_path_prefix
-        else:
-            self.extract_path_prefix = "Build/"
-            if subdir is not None:
-                self.extract_path_prefix += subdir + "/"
+        self.extract_path_prefix = extract_path + "/"
 
         self.unzipped = False
 
