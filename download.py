@@ -13,8 +13,6 @@ class Download:
         self.branch = branch
 
         self.download_path = "Downloads/"
-        if subdir is not None:
-            self.download_path += subdir + "/"
         self.download_path += self.name + "-" + self.branch + ".zip"
 
         if extract_path_prefix is not None:
