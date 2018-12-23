@@ -153,8 +153,9 @@ class Project:
             print("    Failed to build project")
             raise
 
-    def launch(self, compiler):
-        compiler.launch(self._resolve_makefile_path(compiler))
+    def launch(self, compiler, architecture_dir_name):
+        compiler.launch(self._resolve_makefile_path(compiler,
+                                                    architecture_dir_name))
 
     def _resolve_makefile_path(self, compiler, architecture_dir_name):
         result = re.sub(r"\$\(compiler_short_name\)",
@@ -363,7 +364,7 @@ class Projects:
             output.next_step()
         state.set_build_complete()
 
-    def test(self, compiler, input):
+    def test(self, compiler, architecture_dir_name, input):
         for test in self.tests:
             # TODO
             executable_path = "Build/" + test.project_name + \
@@ -374,7 +375,8 @@ class Projects:
                 launchIDE = input.query("    Tests failed. Do you you want to"
                                         " launch the IDE?", ["y", "n"], "n")
                 if launchIDE == "y":
-                    self.get(test.project_name).launch(compiler)
+                    self.get(test.project_name).launch(compiler,
+                                                       architecture_dir_name)
                 raise RuntimeError(test.project_name + " tests failed.")
 
     def _init_downloader(self):
