@@ -235,9 +235,29 @@ class Projects:
             False))
         self.projects.append(libgit2Project())
         self.projects.append(Project(
+            "Ishiko/Errors",
+            "ISHIKO",
+            "Makefiles/$(compiler_short_name)/IshikoErrors.sln",
+            False))
+        self.projects.append(Project(
+            "Ishiko/Collections",
+            "ISHIKO",
+            "Makefiles/$(compiler_short_name)/IshikoCollections.sln",
+            False))
+        self.projects.append(Project(
             "Ishiko/Process",
             "ISHIKO",
             "Makefiles/$(compiler_short_name)/IshikoProcess.sln",
+            False))
+        self.projects.append(Project(
+            "DiplodocusDB/Core",
+            "DIPLODOCUSDB",
+            "Makefiles/$(compiler_short_name)/DiplodocusDBCore.sln",
+            False))
+        self.projects.append(Project(
+            "DiplodocusDB/TreeDB/XMLTreeDB",
+            "DIPLODOCUSDB",
+            "Makefiles/$(compiler_short_name)/DiplodocusXMLTreeDB.sln",
             False))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/Core",
@@ -249,11 +269,6 @@ class Projects:
             "CODESMITHY",
             "Makefiles/$(compiler_short_name)/CodeSmithyMake.sln",
             False))
-        self.projects.append(Project(
-            "Ishiko/Errors",
-            "ISHIKO",
-            "Makefiles/$(compiler_short_name)/IshikoErrors.sln",
-            True))
         self.projects.append(Project(
             "Ishiko/TestFramework/Core",
             "ISHIKO",
