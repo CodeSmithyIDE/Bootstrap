@@ -29,12 +29,13 @@ class BuildConfiguration:
     def select_configuration(self, architecture, compiler, input, state):
         compiler_configuration = self._select_compiler_configuration(compiler, input, state)
         self.cmake_configuration = compiler_configuration
-        self.compiler_configuration = compiler_configuration + "|"
-        if architecture == "64":
-            self.architecture_dir_name = "x64"
-        else:
-            self.architecture_dir_name = "Win32"
-        self.compiler_configuration += self.architecture_dir_name
+        if isinstance(compiler, VisualStudio):
+            self.compiler_configuration = compiler_configuration + "|"
+            if architecture == "64":
+                self.architecture_dir_name = "x64"
+            else:
+                self.architecture_dir_name = "Win32"
+            self.compiler_configuration += self.architecture_dir_name
         self.codesmithymake_configuration = "Microsoft Windows "
         if architecture == "64":
             self.codesmithymake_configuration += "x86_64"

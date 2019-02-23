@@ -17,6 +17,11 @@ class Compiler:
             raise RuntimeError("Compilation of " + makefile_path + " failed.")
 
 
+class GNUmake(Compiler):
+    def __init__(self):
+        super().__init__("GNUmake", "GNUmakefile", "make", "")
+
+
 class VisualStudio(Compiler):
     def __init__(self, name, short_name, executable, architecture):
         cmake_generator = ""
@@ -42,15 +47,18 @@ class VisualStudio(Compiler):
 
 
 class Compilers:
-    def __init__(self, architecture):
-        self.architecture = architecture
+    def __init__(self, target):
+        self.architecture = target.architecture
         self.compilers = []
         foundMSVC2017 = os.path.isfile("C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/IDE/devenv.exe")
         if foundMSVC2017:
-            self.compilers.append(VisualStudio("Visual Studio 2017", "VC15", "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/IDE/devenv.exe", architecture))
+            self.compilers.append(VisualStudio("Visual Studio 2017", "VC15", "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/IDE/devenv.exe", self.architecture))
         foundMSVC14 = os.path.isfile("C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/IDE/devenv.exe")
         if foundMSVC14:
-            self.compilers.append(VisualStudio("Visual Studio 2015", "VC14", "C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/IDE/devenv.exe", architecture))
+            self.compilers.append(VisualStudio("Visual Studio 2015", "VC14", "C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/IDE/devenv.exe", self.architecture))
+        if target.platform == "Linux":
+            self.compilers.append(GNUmake())
+        
 
     def select_compiler(self, input, state, output):
         print("")

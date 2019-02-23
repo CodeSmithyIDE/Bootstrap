@@ -168,16 +168,19 @@ class Project:
 
 
 class libgit2Project(Project):
-    def __init__(self):
+    def __init__(self, target):
         super().__init__("libgit2", "LIBGIT2", "$(arch)/CMakeLists.txt", False)
+        self.target = target
         self.cmake_generation_args = ["-DBUILD_SHARED_LIBS=OFF",
                                       "-DSTATIC_CRT=OFF"]
 
     def unzip(self, downloader):
-        # TODO : just do the normal unzip on Linux
-        Path("Build/libgit2").mkdir(exist_ok=True)
-        downloader.unzip("libgit2",
-                         ["Build/libgit2/Win32", "Build/libgit2/x64"])
+        if self.target.platform == "Linux":
+            super().unzip(downloader)
+        else:
+            Path("Build/libgit2").mkdir(exist_ok=True)
+            downloader.unzip("libgit2",
+                             ["Build/libgit2/Win32", "Build/libgit2/x64"])
 
 class wxWidgetsProject(Project):
     def __init__(self):
@@ -225,7 +228,7 @@ class Test:
 
 
 class Projects:
-    def __init__(self):
+    def __init__(self, target):
         self.downloader = Downloader()
         self.projects = []
         self.projects.append(Project(
@@ -233,7 +236,7 @@ class Projects:
             "PUGIXML",
             None,
             False))
-        self.projects.append(libgit2Project())
+        self.projects.append(libgit2Project(target))
         self.projects.append(Project(
             "Ishiko/Errors",
             "ISHIKO",

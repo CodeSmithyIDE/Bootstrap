@@ -8,6 +8,7 @@ from input import Input
 from output import Output
 from argparser import ArgParser
 from state import State
+from target import Target
 from dependencies import Dependencies
 from projects import Projects
 from cmake import CMake
@@ -41,9 +42,9 @@ def download_source_packages(projects, skip, input, state, output):
     output.next_step()
 
 
-def select_architecture(input, state, output):
+def select_target(input, state, output):
     platform_name = platform.system()
-    is_64bit_supported = (platform.machine() == "AMD64")
+    is_64bit_supported = ((platform.machine() == "AMD64") or (platform.machine() == "x86_64"))
     
     print("")
     output.print_step_title("Architecture choice")
@@ -60,7 +61,7 @@ def select_architecture(input, state, output):
         print("    Using previous selection: " + selected_architecture)
     state.set_architecture(selected_architecture)
     output.next_step()
-    return selected_architecture
+    return Target(platform_name, selected_architecture)
 
 
 def main_bootstrap_build(args, input, state, output):
@@ -70,32 +71,32 @@ def main_bootstrap_build(args, input, state, output):
 
         try_restore_previous_state(input, "n", state)
     
-        selected_architecture = select_architecture(input, state, output)
+        target = select_target(input, state, output)
 
         Path("Build").mkdir(exist_ok=True)
 
         dependencies = Dependencies()
         dependencies.check(output)
 
-        projects = Projects()
+        projects = Projects(target)
 
         projects.set_environment_variables(output)
 
         download_source_packages(projects, args.skip_downloads, input, state,
                                  output)
 
-        compilers = Compilers(selected_architecture)
+        compilers = Compilers(target)
         compiler = compilers.select_compiler(input, state, output)
 
         build_configuration = BuildConfiguration()
-        build_configuration.select_configuration(selected_architecture,
+        build_configuration.select_configuration(target.architecture,
                                                  compiler, input, state)
-        
+
         cmake = CMake(compiler.cmake_generator)
-        cmake.install(platform.system(), (selected_architecture == "64"),
+        cmake.install(platform.system(), (target.architecture == "64"),
                       state, output)
 
-        codesmithymake = CodeSmithyMake(selected_architecture)
+        codesmithymake = CodeSmithyMake(target.architecture)
 
         build_tools = BuildTools(cmake, compiler, codesmithymake)
         
