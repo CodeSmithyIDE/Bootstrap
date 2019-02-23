@@ -4,7 +4,10 @@ import subprocess
 import shutil
 from pathlib import Path
 from state import State
+from target import Target
+from compilers import GNUmake
 from output import Output
+from download import Download
 from build import BuildConfiguration
 
 
@@ -14,8 +17,7 @@ class CMake:
     def __init__(self, generator):
         self.generator = generator
 
-    def install(self, platform_name: str, is64bit: bool, state: State,
-                output: Output):
+    def install(self, target: Target, state: State, output: Output):
         """Installs CMake.
 
         CMake is not easily buildable on Windows so we rely on a binary
@@ -23,11 +25,8 @@ class CMake:
 
         Parameters
         ----------
-        platform_name : str
-            The name of the platform. Used to detect whether we are running on
-            Windows.
-        is64bit: bool
-            Whether to installed the 64-bit or 32-bit version CMake.
+        target: Target
+            The target platform and architecture.
         state: State
             The state of the bootstrap build.
         output: Output
@@ -36,7 +35,7 @@ class CMake:
         print("")
         output.print_step_title("Installing CMake")
         if state.cmake_path == "":
-            self._install(platform_name, is64bit)
+            self._install(target)
             print("    CMake installed successfully")
         else:
             self.path = state.cmake_path
@@ -67,8 +66,9 @@ class CMake:
                 generation_args.extend(build_configuration.cmake_generation_args)
                 print("    Executing " + " ".join(generation_args))
                 subprocess.check_call(generation_args, stdout=output_file)
-                build_args = [cmake_path, "--build", ".", "--config",
-                              build_configuration.cmake_configuration]
+                build_args = [cmake_path, "--build", "."]
+                if build_configuration.cmake_configuration:
+                    build_args.extend(["--config", build_configuration.cmake_configuration])
                 print("    Executing " + " ".join(build_args))
                 subprocess.check_call(build_args, stdout=output_file)
         except subprocess.CalledProcessError:
@@ -76,11 +76,11 @@ class CMake:
         finally:
             os.chdir(previous_working_dir)
 
-    def _install(self, platform_name, is64bit):
+    def _install(self, target):
         self.path = ""
-        if platform_name == "Windows":
+        if target.platform == "Windows":
             architecture_string = ""
-            if is64bit:
+            if target.architecture == "64":
                 architecture_string = "-win64-x64"
             else:
                 architecture_string = "-win32-x86"
@@ -93,3 +93,25 @@ class CMake:
             shutil.rmtree(self.path, ignore_errors=True)
             zip_ref.extractall("Build")
             zip_ref.close()
+        elif target.platform == "Linux":
+            download_url = "https://github.com/CodeSmithyIDE/CMake/archive/master.zip"
+            download = Download("CMake", download_url, "Build")
+            download.download(None)
+            download.unzip()
+            previous_working_dir = os.getcwd()
+            os.chdir("Build/CMake")
+            try:
+                try:
+                    subprocess.check_call(["chmod", "0774", "bootstrap"])
+                except subprocess.CalledProcessError:
+                    raise RuntimeError("chmod 0774 bootstrap failed.")
+                try:
+                    subprocess.check_call("./bootstrap")
+                except subprocess.CalledProcessError:
+                    raise RuntimeError("./bootstrap failed.")
+                GNUmake().compile("Makefile")
+                self.path = "Build/CMake/bin/cmake"
+            finally:
+                os.chdir(previous_working_dir)
+        else:
+            raise RuntimeError("Unsupported platform: " + target.platform)

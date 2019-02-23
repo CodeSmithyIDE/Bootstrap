@@ -19,9 +19,10 @@ class Download:
         self.unzipped = False
 
     def download(self, substep):
-        print("    Step 4" + substep + ": Fetching " + self.name +
-              " code from " + self.url,
-              flush=True)
+        if substep != None:
+            print("    Step 4" + substep + ": Fetching " + self.name +
+                  " code from " + self.url,
+                  flush=True)
         Path(self.download_path).parent.mkdir(parents=True, exist_ok=True)
         urllib.request.urlretrieve(self.url, self.download_path)
 

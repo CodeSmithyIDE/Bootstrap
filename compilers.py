@@ -19,7 +19,13 @@ class Compiler:
 
 class GNUmake(Compiler):
     def __init__(self):
-        super().__init__("GNUmake", "GNUmakefile", "make", "")
+        super().__init__("GNUmake", "GNUmakefile", "make", "Unix Makefiles")
+
+    def compile(self, makefile_path):
+        try:
+            subprocess.check_call([self.executable, "--makefile=" + makefile_path])
+        except subprocess.CalledProcessError:
+            raise RuntimeError("Compilation of " + makefile_path + " failed.")
 
 
 class VisualStudio(Compiler):
