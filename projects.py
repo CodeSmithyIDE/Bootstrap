@@ -158,9 +158,14 @@ class Project:
                                                     architecture_dir_name))
 
     def _resolve_makefile_path(self, compiler, architecture_dir_name):
-        result = re.sub(r"\$\(compiler_short_name\)",
-                        compiler.short_name,
-                        self.makefile_path)
+        if compiler.short_name == "GNUmakefile":
+            result = re.sub(r"\$\(compiler_short_name\).*",
+                            compiler.short_name + "/GNUmakefile",
+                            self.makefile_path)
+        else:
+            result = re.sub(r"\$\(compiler_short_name\)",
+                            compiler.short_name,
+                            self.makefile_path)
         result = re.sub(r"\$\(arch\)",
                         architecture_dir_name,
                         result)

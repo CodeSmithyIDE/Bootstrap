@@ -21,7 +21,7 @@ class GNUmake(Compiler):
     def __init__(self):
         super().__init__("GNUmake", "GNUmakefile", "make", "Unix Makefiles")
 
-    def compile(self, makefile_path):
+    def compile(self, makefile_path, configuration, input):
         try:
             subprocess.check_call([self.executable, "--makefile=" + makefile_path])
         except subprocess.CalledProcessError:
