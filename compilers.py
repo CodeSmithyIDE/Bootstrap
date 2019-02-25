@@ -1,4 +1,4 @@
-import os.path
+import os
 import subprocess
 
 
@@ -22,10 +22,14 @@ class GNUmake(Compiler):
         super().__init__("GNUmake", "GNUmakefile", "make", "Unix Makefiles")
 
     def compile(self, makefile_path, configuration, input):
+        previous_working_dir = os.getcwd()
+        os.chdir(os.path.dirname(makefile_path))
         try:
-            subprocess.check_call([self.executable, "--makefile=" + makefile_path])
+            subprocess.check_call([self.executable, "--makefile=" + os.path.basename(makefile_path)])
         except subprocess.CalledProcessError:
             raise RuntimeError("Compilation of " + makefile_path + " failed.")
+        finally:
+            os.chdir(previous_working_dir)
 
 
 class VisualStudio(Compiler):

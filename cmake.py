@@ -109,7 +109,7 @@ class CMake:
                     subprocess.check_call("./bootstrap")
                 except subprocess.CalledProcessError:
                     raise RuntimeError("./bootstrap failed.")
-                GNUmake().compile("Makefile")
+                GNUmake().compile("Makefile", None, None)
                 self.path = "Build/CMake/bin/cmake"
             finally:
                 os.chdir(previous_working_dir)
