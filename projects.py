@@ -263,6 +263,11 @@ class Projects:
             "Makefiles/$(compiler_short_name)/DiplodocusDBCore.sln",
             False))
         self.projects.append(Project(
+            "DiplodocusDB/TreeDB/Core",
+            "DIPLODOCUSDB",
+            "Makefiles/$(compiler_short_name)/DiplodocusTreeDBCore.sln",
+            False))
+        self.projects.append(Project(
             "DiplodocusDB/TreeDB/XMLTreeDB",
             "DIPLODOCUSDB",
             "Makefiles/$(compiler_short_name)/DiplodocusXMLTreeDB.sln",
