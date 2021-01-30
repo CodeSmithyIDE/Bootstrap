@@ -245,7 +245,7 @@ class Projects:
         self.projects.append(Project(
             "Ishiko/Platform",
             "ISHIKO_CPP",
-            "Makefiles/$(compiler_short_name)/IshikoPlatform.sln",
+            None,
             False))
         self.projects.append(Project(
             "Ishiko/Errors",
@@ -255,7 +255,7 @@ class Projects:
         self.projects.append(Project(
             "Ishiko/Types",
             "ISHIKO_CPP",
-            "Makefiles/$(compiler_short_name)/IshikoErrors.sln",
+            "Makefiles/$(compiler_short_name)/IshikoTypes.sln",
             False))
         self.projects.append(Project(
             "Ishiko/Process",
@@ -266,6 +266,21 @@ class Projects:
             "Ishiko/Collections",
             "ISHIKO_CPP",
             "Makefiles/$(compiler_short_name)/IshikoCollections.sln",
+            False))
+        self.projects.append(Project(
+            "Ishiko/FileSystem",
+            "ISHIKO_CPP",
+            "Makefiles/$(compiler_short_name)/IshikoFileSystem.sln",
+            False))
+        self.projects.append(Project(
+            "Ishiko/Terminal",
+            "ISHIKO_CPP",
+            "Makefiles/$(compiler_short_name)/IshikoTerminal.sln",
+            False))
+        self.projects.append(Project(
+            "Ishiko/Tasks",
+            "ISHIKO_CPP",
+            "Makefiles/$(compiler_short_name)/IshikoTasks.sln",
             False))
         self.projects.append(Project(
             "DiplodocusDB/Core",
