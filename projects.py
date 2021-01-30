@@ -298,14 +298,24 @@ class Projects:
             "Makefiles/$(compiler_short_name)/DiplodocusXMLTreeDB.sln",
             False))
         self.projects.append(Project(
+            "CodeSmithyIDE/VersionControl/Git",
+            "CODESMITHYIDE",
+            "Makefiles/$(compiler_short_name)/CodeSmithyGit.sln",
+            False))
+        self.projects.append(Project(
+            "CodeSmithyIDE/BuildToolchains",
+            "CODESMITHYIDE",
+            "Makefiles/$(compiler_short_name)/CodeSmithyBuildToolchains.sln",
+            False))
+        self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/Core",
             "CODESMITHYIDE",
             "Makefiles/$(compiler_short_name)/CodeSmithyCore.sln",
             False))
         self.projects.append(Project(
-            "CodeSmithyIDE/CodeSmithy/Make",
+            "CodeSmithyIDE/CodeSmithy/CLI",
             "CODESMITHYIDE",
-            "Makefiles/$(compiler_short_name)/CodeSmithyMake.sln",
+            "Makefiles/$(compiler_short_name)/CodeSmithyCLI.sln",
             False))
         self.projects.append(Project(
             "Ishiko/TestFramework/Core",
