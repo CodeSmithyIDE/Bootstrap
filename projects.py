@@ -243,19 +243,29 @@ class Projects:
             False))
         self.projects.append(libgit2Project(target))
         self.projects.append(Project(
+            "Ishiko/Platform",
+            "ISHIKO_CPP",
+            "Makefiles/$(compiler_short_name)/IshikoPlatform.sln",
+            False))
+        self.projects.append(Project(
             "Ishiko/Errors",
-            "ISHIKO",
+            "ISHIKO_CPP",
             "Makefiles/$(compiler_short_name)/IshikoErrors.sln",
             False))
         self.projects.append(Project(
-            "Ishiko/Collections",
-            "ISHIKO",
-            "Makefiles/$(compiler_short_name)/IshikoCollections.sln",
+            "Ishiko/Types",
+            "ISHIKO_CPP",
+            "Makefiles/$(compiler_short_name)/IshikoErrors.sln",
             False))
         self.projects.append(Project(
             "Ishiko/Process",
-            "ISHIKO",
+            "ISHIKO_CPP",
             "Makefiles/$(compiler_short_name)/IshikoProcess.sln",
+            False))
+        self.projects.append(Project(
+            "Ishiko/Collections",
+            "ISHIKO_CPP",
+            "Makefiles/$(compiler_short_name)/IshikoCollections.sln",
             False))
         self.projects.append(Project(
             "DiplodocusDB/Core",
@@ -274,63 +284,63 @@ class Projects:
             False))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/Core",
-            "CODESMITHY",
+            "CODESMITHYIDE",
             "Makefiles/$(compiler_short_name)/CodeSmithyCore.sln",
             False))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/Make",
-            "CODESMITHY",
+            "CODESMITHYIDE",
             "Makefiles/$(compiler_short_name)/CodeSmithyMake.sln",
             False))
         self.projects.append(Project(
             "Ishiko/TestFramework/Core",
-            "ISHIKO",
+            "ISHIKO_CPP",
             "Makefiles/$(compiler_short_name)/IshikoTestFrameworkCore.sln",
             True))
         self.projects.append(Project(
             "Ishiko/WindowsRegistry",
-            "ISHIKO",
+            "ISHIKO_CPP",
             "Makefiles/$(compiler_short_name)/IshikoWindowsRegistry.sln",
             True))
         self.projects.append(Project(
             "Ishiko/FileTypes",
-            "ISHIKO",
+            "ISHIKO_CPP",
             "Makefiles/$(compiler_short_name)/IshikoFileTypes.sln",
             True))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/UICore",
-            "CODESMITHY",
+            "CODESMITHYIDE",
             "Makefiles/$(compiler_short_name)/CodeSmithyUICore.sln",
             True))
         self.projects.append(wxWidgetsProject())
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/UIElements",
-            "CODESMITHY",
+            "CODESMITHYIDE",
             "Makefiles/$(compiler_short_name)/CodeSmithyUIElements.sln",
             True))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/UIImplementation",
-            "CODESMITHY",
+            "CODESMITHYIDE",
             "Makefiles/$(compiler_short_name)/CodeSmithyUIImplementation.sln",
             True))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/UI",
-            "CODESMITHY",
+            "CODESMITHYIDE",
             "Makefiles/$(compiler_short_name)/CodeSmithy.sln",
             True))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/Tests/Core",
-            "CODESMITHY",
+            "CODESMITHYIDE",
             "Makefiles/$(compiler_short_name)/CodeSmithyCoreTests.sln",
             True))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/Tests/Make",
-            "CODESMITHY",
+            "CODESMITHYIDE",
             "Makefiles/$(compiler_short_name)/CodeSmithyMakeTests.sln",
             True))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/Tests/UICore",
-            "CODESMITHY",
+            "CODESMITHYIDE",
             "Makefiles/$(compiler_short_name)/CodeSmithyUICoreTests.sln",
             True))
         self.tests = []
