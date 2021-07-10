@@ -35,9 +35,9 @@ class GNUmake(Compiler):
 class VisualStudio(Compiler):
     def __init__(self, name, short_name, executable, architecture):
         cmake_generator = ""
-        if short_name == "VC14":
+        if short_name == "vc14":
             cmake_generator = "Visual Studio 14 2015"
-        elif short_name == "VC15":
+        elif short_name == "vc15":
             cmake_generator = "Visual Studio 15 2017"
         if architecture == "64":
             cmake_generator += " Win64"
@@ -62,10 +62,10 @@ class Compilers:
         self.compilers = []
         foundMSVC2017 = os.path.isfile("C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/IDE/devenv.exe")
         if foundMSVC2017:
-            self.compilers.append(VisualStudio("Visual Studio 2017", "VC15", "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/IDE/devenv.exe", self.architecture))
+            self.compilers.append(VisualStudio("Visual Studio 2017", "vc15", "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/IDE/devenv.exe", self.architecture))
         foundMSVC14 = os.path.isfile("C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/IDE/devenv.exe")
         if foundMSVC14:
-            self.compilers.append(VisualStudio("Visual Studio 2015", "VC14", "C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/IDE/devenv.exe", self.architecture))
+            self.compilers.append(VisualStudio("Visual Studio 2015", "vc14", "C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/IDE/devenv.exe", self.architecture))
         if target.platform == "Linux":
             self.compilers.append(GNUmake())
         

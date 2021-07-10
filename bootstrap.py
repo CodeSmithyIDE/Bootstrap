@@ -25,7 +25,7 @@ def try_restore_previous_state(input, default, state):
             ["y", "n"], default)
         if resume == "n":
             state.reset()
-            Utils.rmdir_with_retry("Build", input)
+            Utils.rmdir_with_retry("build", input)
 
 
 def download_source_packages(projects, skip, input, state, output):
@@ -73,7 +73,7 @@ def main_bootstrap_build(args, input, state, output):
     
         target = select_target(input, state, output)
 
-        Path("Build").mkdir(exist_ok=True)
+        Path("build").mkdir(exist_ok=True)
 
         dependencies = Dependencies()
         dependencies.check(output)
@@ -118,7 +118,7 @@ def main_bootstrap_build(args, input, state, output):
         Path(second_phase_path).mkdir(exist_ok=True)
         print(second_phase_path)
         # TODO
-        shutil.copyfile("Build/CodeSmithyIDE/CodeSmithy/Bin/x64/CodeSmithy.exe", second_phase_path + "/CodeSmithy.exe")
+        shutil.copyfile("build/codesmithyide/codesmithy/bin/x64/CodeSmithy.exe", second_phase_path + "/CodeSmithy.exe")
         output.next_step()
     except RuntimeError as error:
         print("")

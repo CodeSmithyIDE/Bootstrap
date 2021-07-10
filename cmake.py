@@ -91,7 +91,7 @@ class CMake:
 
             # TODO : the path we delete here doesn't seem right
             shutil.rmtree(self.path, ignore_errors=True)
-            zip_ref.extractall("Build")
+            zip_ref.extractall("build")
             zip_ref.close()
         elif target.platform == "Linux":
             download_url = "https://github.com/CodeSmithyIDE/CMake/archive/master.zip"
@@ -99,7 +99,7 @@ class CMake:
             download.download(None)
             download.unzip()
             previous_working_dir = os.getcwd()
-            os.chdir("Build/CMake")
+            os.chdir("build/CMake")
             try:
                 try:
                     subprocess.check_call(["chmod", "0774", "bootstrap"])
@@ -110,7 +110,7 @@ class CMake:
                 except subprocess.CalledProcessError:
                     raise RuntimeError("./bootstrap failed.")
                 GNUmake().compile("Makefile", None, None)
-                self.path = "Build/CMake/bin/cmake"
+                self.path = "build/CMake/bin/cmake"
             finally:
                 os.chdir(previous_working_dir)
         else:
