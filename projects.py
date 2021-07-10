@@ -15,6 +15,7 @@ class Project:
 
     def __init__(self,
                  name: str,
+                 branch: str,
                  env_var: str,
                  makefile_path: Optional[str],
                  use_codesmithy_make: bool):
@@ -36,11 +37,12 @@ class Project:
         """
 
         self.name = name
+        self.branch = branch
         self.env_var = env_var
         if makefile_path is None:
             self.makefile_path = None
         else:
-            self.makefile_path = "Build/" + name + "/" + makefile_path
+            self.makefile_path = "build/" + name + "/" + makefile_path
         self.use_codesmithy_make = use_codesmithy_make
         self.cmake_generation_args = []
 
@@ -70,14 +72,14 @@ class Project:
         split_name = self.name.split("/")
         download = None
         if len(split_name) == 1:
-            download_url = "https://github.com/CodeSmithyIDE/" + \
-                           split_name[0] + "/archive/master.zip"
-            download = Download(split_name[0], download_url, "Build")
+            download_url = "https://github.com/codesmithyide/" + \
+                           split_name[0] + "/archive/" + self.branch + ".zip"
+            download = Download(split_name[0], download_url, "build", self.branch)
         else:
-            download_url = "https://github.com/CodeSmithyIDE/" + \
-                           split_name[1] + "/archive/master.zip"
+            download_url = "https://github.com/codesmithyide/" + \
+                           split_name[1] + "/archive/" + self.branch + ".zip"
             download = Download(split_name[1], download_url,
-                                "Build/" + split_name[0])
+                                "build/" + split_name[0], self.branch)
         downloader.downloads.append(download)
 
         return downloader
@@ -174,7 +176,7 @@ class Project:
 
 class libgit2Project(Project):
     def __init__(self, target):
-        super().__init__("libgit2", "LIBGIT2", "$(arch)/CMakeLists.txt", False)
+        super().__init__("libgit2", "main", "LIBGIT2", "$(arch)/CMakeLists.txt", False)
         self.target = target
         self.cmake_generation_args = ["-DBUILD_SHARED_LIBS=OFF",
                                       "-DSTATIC_CRT=OFF"]
@@ -183,13 +185,13 @@ class libgit2Project(Project):
         if self.target.platform == "Linux":
             super().unzip(downloader)
         else:
-            Path("Build/libgit2").mkdir(exist_ok=True)
+            Path("build/libgit2").mkdir(exist_ok=True)
             downloader.unzip("libgit2",
-                             ["Build/libgit2/Win32", "Build/libgit2/x64"])
+                             ["build/libgit2/Win32", "build/libgit2/x64"])
 
 class wxWidgetsProject(Project):
     def __init__(self):
-        super().__init__("wxWidgets", "WXWIN",
+        super().__init__("wxWidgets", "master", "WXWIN",
                          "build/msw/wx_$(compiler_short_name).sln", False)
 
     def create_downloader(self):
@@ -200,25 +202,25 @@ class wxWidgetsProject(Project):
         for module in modules:
             downloader.downloads.append(
                 Download(module, url_prefix + module + url_suffix,
-                         "Build/wxWidgets/src", "wx"))
+                         "build/wxWidgets/src", "wx"))
         return downloader
 
     def unzip(self, downloader):
         super().unzip(downloader)
         downloader.unzip("zlib")
         downloader.unzip("libpng")
-        os.rmdir("Build/wxWidgets/src/png")
-        os.rename("Build/wxWidgets/src/libpng", "Build/wxWidgets/src/png")
+        os.rmdir("build/wxWidgets/src/png")
+        os.rename("build/wxWidgets/src/libpng", "build/wxWidgets/src/png")
         downloader.unzip("libexpat")
-        os.rmdir("Build/wxWidgets/src/expat")
-        os.rename("Build/wxWidgets/src/libexpat", "Build/wxWidgets/src/expat")
+        os.rmdir("build/wxWidgets/src/expat")
+        os.rename("build/wxWidgets/src/libexpat", "build/wxWidgets/src/expat")
         downloader.unzip("libjpeg-turbo")
-        os.rmdir("Build/wxWidgets/src/jpeg")
-        os.rename("Build/wxWidgets/src/libjpeg-turbo",
-                  "Build/wxWidgets/src/jpeg")
+        os.rmdir("build/wxWidgets/src/jpeg")
+        os.rename("build/wxWidgets/src/libjpeg-turbo",
+                  "build/wxWidgets/src/jpeg")
         downloader.unzip("libtiff")
-        os.rmdir("Build/wxWidgets/src/tiff")
-        os.rename("Build/wxWidgets/src/libtiff", "Build/wxWidgets/src/tiff")
+        os.rmdir("build/wxWidgets/src/tiff")
+        os.rename("build/wxWidgets/src/libtiff", "build/wxWidgets/src/tiff")
 
     def _resolve_makefile_path(self, compiler, architecture_dir_name):
         return re.sub(r"\$\(compiler_short_name\)",
@@ -238,133 +240,159 @@ class Projects:
         self.projects = []
         self.projects.append(Project(
             "pugixml",
+            "master",
             "PUGIXML",
             None,
             False))
         self.projects.append(libgit2Project(target))
         self.projects.append(Project(
             "Ishiko/Platform",
+            "main",
             "ISHIKO_CPP",
             None,
             False))
         self.projects.append(Project(
             "Ishiko/Errors",
+            "main",
             "ISHIKO_CPP",
             "Makefiles/$(compiler_short_name)/IshikoErrors.sln",
             False))
         self.projects.append(Project(
             "Ishiko/Types",
+            "main",
             "ISHIKO_CPP",
             "Makefiles/$(compiler_short_name)/IshikoTypes.sln",
             False))
         self.projects.append(Project(
             "Ishiko/Process",
+            "main",
             "ISHIKO_CPP",
             "Makefiles/$(compiler_short_name)/IshikoProcess.sln",
             False))
         self.projects.append(Project(
             "Ishiko/Collections",
+            "main",
             "ISHIKO_CPP",
             "Makefiles/$(compiler_short_name)/IshikoCollections.sln",
             False))
         self.projects.append(Project(
             "Ishiko/FileSystem",
+            "main",
             "ISHIKO_CPP",
             "Makefiles/$(compiler_short_name)/IshikoFileSystem.sln",
             False))
         self.projects.append(Project(
             "Ishiko/Terminal",
+            "main",
             "ISHIKO_CPP",
             "Makefiles/$(compiler_short_name)/IshikoTerminal.sln",
             False))
         self.projects.append(Project(
             "Ishiko/Tasks",
+            "main",
             "ISHIKO_CPP",
             "Makefiles/$(compiler_short_name)/IshikoTasks.sln",
             False))
         self.projects.append(Project(
             "DiplodocusDB/Core",
+            "main",
             "DIPLODOCUSDB",
             "Makefiles/$(compiler_short_name)/DiplodocusDBCore.sln",
             False))
         self.projects.append(Project(
             "DiplodocusDB/TreeDB/Core",
+            "main",
             "DIPLODOCUSDB",
             "Makefiles/$(compiler_short_name)/DiplodocusTreeDBCore.sln",
             False))
         self.projects.append(Project(
             "DiplodocusDB/TreeDB/XMLTreeDB",
+            "main",
             "DIPLODOCUSDB",
             "Makefiles/$(compiler_short_name)/DiplodocusXMLTreeDB.sln",
             False))
         self.projects.append(Project(
             "CodeSmithyIDE/VersionControl/Git",
+            "main",
             "CODESMITHYIDE",
             "Makefiles/$(compiler_short_name)/CodeSmithyGit.sln",
             False))
         self.projects.append(Project(
             "CodeSmithyIDE/BuildToolchains",
+            "main",
             "CODESMITHYIDE",
             "Makefiles/$(compiler_short_name)/CodeSmithyBuildToolchains.sln",
             False))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/Core",
+            "main",
             "CODESMITHYIDE",
             "Makefiles/$(compiler_short_name)/CodeSmithyCore.sln",
             False))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/CLI",
+            "main",
             "CODESMITHYIDE",
             "Makefiles/$(compiler_short_name)/CodeSmithyCLI.sln",
             False))
         self.projects.append(Project(
             "Ishiko/TestFramework/Core",
+            "main",
             "ISHIKO_CPP",
             "Makefiles/$(compiler_short_name)/IshikoTestFrameworkCore.sln",
             True))
         self.projects.append(Project(
             "Ishiko/WindowsRegistry",
+            "main",
             "ISHIKO_CPP",
             "Makefiles/$(compiler_short_name)/IshikoWindowsRegistry.sln",
             True))
         self.projects.append(Project(
             "Ishiko/FileTypes",
+            "main",
             "ISHIKO_CPP",
             "Makefiles/$(compiler_short_name)/IshikoFileTypes.sln",
             True))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/UICore",
+            "main",
             "CODESMITHYIDE",
             "Makefiles/$(compiler_short_name)/CodeSmithyUICore.sln",
             True))
         self.projects.append(wxWidgetsProject())
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/UIElements",
+            "main",
             "CODESMITHYIDE",
             "Makefiles/$(compiler_short_name)/CodeSmithyUIElements.sln",
             True))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/UIImplementation",
+            "main",
             "CODESMITHYIDE",
             "Makefiles/$(compiler_short_name)/CodeSmithyUIImplementation.sln",
             True))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/UI",
+            "main",
             "CODESMITHYIDE",
             "Makefiles/$(compiler_short_name)/CodeSmithy.sln",
             True))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/Tests/Core",
+            "main",
             "CODESMITHYIDE",
             "Makefiles/$(compiler_short_name)/CodeSmithyCoreTests.sln",
             True))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/Tests/Make",
+            "main",
             "CODESMITHYIDE",
             "Makefiles/$(compiler_short_name)/CodeSmithyMakeTests.sln",
             True))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/Tests/UICore",
+            "main",
             "CODESMITHYIDE",
             "Makefiles/$(compiler_short_name)/CodeSmithyUICoreTests.sln",
             True))
