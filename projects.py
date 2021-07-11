@@ -179,7 +179,7 @@ class Project:
 
 class libgit2Project(Project):
     def __init__(self, target):
-        super().__init__("libgit2", "libgit2", "main", "build/libgit2", "LIBGIT2", "", "$(arch)/CMakeLists.txt", False)
+        super().__init__("libgit2", "libgit2", "main", "build/libgit2", "LIBGIT2", "libgit2", "$(arch)/CMakeLists.txt", False)
         self.target = target
         self.cmake_generation_args = ["-DBUILD_SHARED_LIBS=OFF",
                                       "-DSTATIC_CRT=OFF"]
@@ -365,8 +365,8 @@ class Projects:
             "main",
             "build/codesmithyide/version-control",
             "CODESMITHYIDE",
-            "",
-            "build/$(compiler_short_name)/CodeSmithyGit.sln",
+            "codesmithyide",
+            "git/build/$(compiler_short_name)/CodeSmithyGit.sln",
             False))
         self.projects.append(Project(
             "CodeSmithyIDE/BuildToolchains",
@@ -374,7 +374,7 @@ class Projects:
             "main",
             "build/codesmithyide/build-toolchains",
             "CODESMITHYIDE",
-            "",
+            "codesmithyide",
             "build/$(compiler_short_name)/CodeSmithyBuildToolchains.sln",
             False))
         self.projects.append(Project(
@@ -383,8 +383,8 @@ class Projects:
             "main",
             "build/codesmithyide/codesmithy",
             "CODESMITHYIDE",
-            "",
-            "Makefiles/$(compiler_short_name)/CodeSmithyCore.sln",
+            "codesmithyide",
+            "core/build/$(compiler_short_name)/CodeSmithyCore.sln",
             False))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/CLI",
@@ -392,17 +392,17 @@ class Projects:
             "main",
             "build/codesmithyide/codesmithy",
             "CODESMITHYIDE",
-            "",
-            "Makefiles/$(compiler_short_name)/CodeSmithyCLI.sln",
+            "codesmithyide",
+            "cli/build/$(compiler_short_name)/CodeSmithyCLI.sln",
             False))
         self.projects.append(Project(
-            "Ishiko/TestFramework/Core",
+            "Ishiko/Tests/Core",
             "ishiko-cpp-tests",
             "main",
             "build/ishiko/cpp/tests",
             "ISHIKO_CPP",
             "ishiko/cpp",
-            "Makefiles/$(compiler_short_name)/IshikoTestFrameworkCore.sln",
+            "core/build/$(compiler_short_name)/IshikoTestsCore.sln",
             True))
         self.projects.append(Project(
             "Ishiko/WindowsRegistry",
@@ -411,7 +411,7 @@ class Projects:
             "build/ishiko/cpp/windows-registry",
             "ISHIKO_CPP",
             "ishiko/cpp",
-            "Makefiles/$(compiler_short_name)/IshikoWindowsRegistry.sln",
+            "build/$(compiler_short_name)/IshikoWindowsRegistry.sln",
             True))
         self.projects.append(Project(
             "Ishiko/FileTypes",
@@ -420,7 +420,7 @@ class Projects:
             "build/ishiko/cpp/file-types",
             "ISHIKO_CPP",
             "ishiko/cpp",
-            "Makefiles/$(compiler_short_name)/IshikoFileTypes.sln",
+            "build/$(compiler_short_name)/IshikoFileTypes.sln",
             True))
         self.projects.append(Project(
             "CodeSmithyIDE/CodeSmithy/UICore",
@@ -428,7 +428,7 @@ class Projects:
             "main",
             "build/codesmithyide/codesmithy",
             "CODESMITHYIDE",
-            "",
+            "codesmithyide",
             "Makefiles/$(compiler_short_name)/CodeSmithyUICore.sln",
             True))
         self.projects.append(wxWidgetsProject())
@@ -438,7 +438,7 @@ class Projects:
             "main",
             "build/codesmithyide/codesmithy",
             "CODESMITHYIDE",
-            "",
+            "codesmithyide",
             "Makefiles/$(compiler_short_name)/CodeSmithyUIElements.sln",
             True))
         self.projects.append(Project(
@@ -447,7 +447,7 @@ class Projects:
             "main",
             "build/codesmithyide/codesmithy",
             "CODESMITHYIDE",
-            "",
+            "codesmithyide",
             "Makefiles/$(compiler_short_name)/CodeSmithyUIImplementation.sln",
             True))
         self.projects.append(Project(
@@ -456,7 +456,7 @@ class Projects:
             "main",
             "build/codesmithyide/codesmithy",
             "CODESMITHYIDE",
-            "",
+            "codesmithyide",
             "Makefiles/$(compiler_short_name)/CodeSmithy.sln",
             True))
         self.projects.append(Project(
@@ -465,7 +465,7 @@ class Projects:
             "main",
             "build/codesmithyide/codesmithy",
             "CODESMITHYIDE",
-            "",
+            "codesmithyide",
             "Makefiles/$(compiler_short_name)/CodeSmithyCoreTests.sln",
             True))
         self.projects.append(Project(
@@ -474,7 +474,7 @@ class Projects:
             "main",
             "build/codesmithyide/codesmithy",
             "CODESMITHYIDE",
-            "",
+            "codesmithyide",
             "Makefiles/$(compiler_short_name)/CodeSmithyMakeTests.sln",
             True))
         self.projects.append(Project(
@@ -483,7 +483,7 @@ class Projects:
             "main",
             "build/codesmithyide/codesmithy",
             "CODESMITHYIDE",
-            "",
+            "codesmithyide",
             "Makefiles/$(compiler_short_name)/CodeSmithyUICoreTests.sln",
             True))
         self.tests = []
